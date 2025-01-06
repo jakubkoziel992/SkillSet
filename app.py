@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from database import db
-from models import ma, Course, courses_schema
+from models import Course, Author
+from schemas import ma, courses_schema, author_schema, authors_schema
 
 
 #Init app
@@ -20,13 +21,17 @@ def health_check():
     return jsonify({ 'msg': 'OK'})  
 
 
-@app.route('/course')
+@app.route('/course', methods=['GET'])
 def get_courses():
     courses = Course.query.all()  
-    result = courses_schema.dump(courses)
     
-    return jsonify(result)
+    return jsonify(courses_schema.dump(courses))
 
+@app.route('/author', methods=['GET'])
+def get_authors():
+    authors = Author.query.all()
+    
+    return jsonify(authors_schema.dump(authors))
  
 if __name__ == "__main__":
     app.run(debug=True)
