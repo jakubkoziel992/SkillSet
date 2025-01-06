@@ -59,7 +59,28 @@ def delete_course(id):
     db.session.commit()
     
     return jsonify(course_schema.dump(course))
+
+
+@app.route('/course/<int:id>/', methods=['PATCH'])
+def update_course(id):
+    course_schema = CourseSchema()
     
+    course = Course.query.get(id)
+    data = request.json
+    
+    if 'name' in data:
+        course.name = data['name']
+    elif 'author_id' in data:
+        course.author_id = data['author_id']
+    elif 'platform' in data:
+        course.platform = data['platform']
+    elif 'completion_date' in data:
+        course.completion_date = data['completion_date']
+    
+    db.session.commit()
+    
+    return jsonify(course_schema.dump(course)) 
+        
          
 
 @app.route('/author', methods=['GET'])
