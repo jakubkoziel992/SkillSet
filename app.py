@@ -15,6 +15,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 ma.init_app(app)
 
+def resource_not_found(resource_name):
+    return jsonify({"error": f"{resource_name} nie został znaleziony"}), 404
+
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -48,13 +51,17 @@ def add_course():
         
         return jsonify(course_input_schema.dump(course))
     
-    return jsonify({"error": f"autor nie został znaleziony"}), 404
+    return resource_not_found('author')
 
 @app.route('/course/<int:id>/', methods=['PATCH'])
 def update_course(id):
     course_schema = CourseSchema()
     
     course = Course.query.get(id)
+    
+    if not course:
+        return resource_not_found('course')
+    
     data = request.json
     
     if 'name' in data:
@@ -75,6 +82,9 @@ def update_course(id):
 def delete_course(id):
     course_schema = CourseSchema()
     course = Course.query.get(id)
+    
+    if not course:
+        return resource_not_found('course')
     
     db.session.delete(course)
     db.session.commit()
@@ -113,6 +123,9 @@ def update_author(id):
     author_schema = AuthorSchema()
     author = Author.query.get(id)
     
+    if not author:
+        return resource_not_found('author')
+    
     name = request.json['name']
     author.name = name
     
@@ -125,6 +138,9 @@ def update_author(id):
 def delete_author(id):
     author_schema = AuthorSchema()
     author = Author.query.get(id)
+    
+    if not author:
+        return resource_not_found('author')
     
     db.session.delete(author)
     db.session.commit()
