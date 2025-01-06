@@ -50,17 +50,6 @@ def add_course():
     
     return jsonify({"error": f"autor nie został znaleziony"}), 404
 
-@app.route('/course/<int:id>/', methods=['DELETE'])
-def delete_course(id):
-    course_schema = CourseSchema()
-    course = Course.query.get(id)
-    
-    db.session.delete(course)
-    db.session.commit()
-    
-    return jsonify(course_schema.dump(course))
-
-
 @app.route('/course/<int:id>/', methods=['PATCH'])
 def update_course(id):
     course_schema = CourseSchema()
@@ -80,8 +69,18 @@ def update_course(id):
     db.session.commit()
     
     return jsonify(course_schema.dump(course)) 
-        
-         
+
+
+@app.route('/course/<int:id>/', methods=['DELETE'])
+def delete_course(id):
+    course_schema = CourseSchema()
+    course = Course.query.get(id)
+    
+    db.session.delete(course)
+    db.session.commit()
+    
+    return jsonify(course_schema.dump(course))
+
 
 @app.route('/author', methods=['GET'])
 def get_authors():
@@ -89,6 +88,7 @@ def get_authors():
     authors = Author.query.all()
     
     return jsonify(authors_schema.dump(authors))
+
 
 @app.route('/author', methods=['POST'])
 def add_author():
@@ -106,6 +106,20 @@ def add_author():
         return jsonify(author_input_schema.dump(new_author))
 
     return jsonify({"error": f"Istnieje już autor o nazwe {author}"}), 404
+
+
+@app.route('/author/<int:id>/', methods=['PUT'])
+def update_author(id):
+    author_schema = AuthorSchema()
+    author = Author.query.get(id)
+    
+    name = request.json['name']
+    author.name = name
+    
+    db.session.commit()
+    
+    return jsonify(author_schema.dump(author))
+
 
 @app.route('/author/<int:id>/', methods=['DELETE'])
 def delete_author(id):
