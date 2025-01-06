@@ -1,7 +1,6 @@
 from database import db
 
 
-
 class Course(db.Model):
     __tablename__ = 'course'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -12,19 +11,21 @@ class Course(db.Model):
     
     author = db.relationship('Author', back_populates='courses')
     
-    
-    
-    # def __init__(self, name, author_id, platform, completion_date):
-    #     self.name = name
-    #     self.author_id = author_id
-    #     self.platform = platform
-    #     self.completion_date = completion_date
-    
+    def __init__(self, name, author_id, platform, completion_date):
+        self.name = name
+        self.author_id = author_id
+        self.platform = platform
+        self.completion_date = completion_date
+        
+        
 class Author(db.Model):
     __tablename__ = 'author'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(150), nullable=False)
     
     courses = db.relationship('Course', back_populates='author')
+    
+    def __init__(self, name):
+        self.name = name
     
 
