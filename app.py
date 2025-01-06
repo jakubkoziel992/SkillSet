@@ -15,6 +15,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 ma.init_app(app)
 
+
+courses_schema = CourseSchema(many=True)
+course_schema = CourseSchema()
+authors_schema = AuthorSchema(many=True)
+author_schema = AuthorSchema()
+
 def resource_not_found(resource_name):
     return jsonify({"error": f"{resource_name} nie został znaleziony"}), 404
 
@@ -26,15 +32,12 @@ def health_check():
 
 @app.route('/course', methods=['GET'])
 def get_courses():
-    courses_schema = CourseSchema(many=True)
     courses = Course.query.all()  
     
     return jsonify(courses_schema.dump(courses))
 
 @app.route('/course', methods=['POST'])
-def add_course():
-    course_input_schema = CourseSchema()
-    
+def add_course():    
     data = request.json
     
     name = data['name']
@@ -49,14 +52,12 @@ def add_course():
         db.session.add(course)
         db.session.commit()
         
-        return jsonify(course_input_schema.dump(course))
+        return jsonify(course_schema.dump(course))
     
     return resource_not_found('author')
 
 @app.route('/course/<int:id>/', methods=['PATCH'])
-def update_course(id):
-    course_schema = CourseSchema()
-    
+def update_course(id):    
     course = Course.query.get(id)
     
     if not course:
@@ -80,7 +81,6 @@ def update_course(id):
 
 @app.route('/course/<int:id>/', methods=['DELETE'])
 def delete_course(id):
-    course_schema = CourseSchema()
     course = Course.query.get(id)
     
     if not course:
@@ -94,16 +94,13 @@ def delete_course(id):
 
 @app.route('/author', methods=['GET'])
 def get_authors():
-    authors_schema = AuthorSchema(many=True)
     authors = Author.query.all()
     
     return jsonify(authors_schema.dump(authors))
 
 
 @app.route('/author', methods=['POST'])
-def add_author():
-    author_input_schema = AuthorSchema()
-    
+def add_author(): 
     name = request.json['name']
     
     author = Author.query.filter_by(name=name).first()
@@ -113,14 +110,13 @@ def add_author():
         db.session.add(new_author)
         db.session.commit()
         
-        return jsonify(author_input_schema.dump(new_author))
+        return jsonify(author_schema.dump(new_author))
 
     return jsonify({"error": f"Istnieje już autor o nazwe {author}"}), 404
 
 
 @app.route('/author/<int:id>/', methods=['PUT'])
 def update_author(id):
-    author_schema = AuthorSchema()
     author = Author.query.get(id)
     
     if not author:
@@ -136,7 +132,6 @@ def update_author(id):
 
 @app.route('/author/<int:id>/', methods=['DELETE'])
 def delete_author(id):
-    author_schema = AuthorSchema()
     author = Author.query.get(id)
     
     if not author:
