@@ -18,12 +18,12 @@ def get_all_courses():
 
 
 def create_course(data):
-    author = Author.query.filter_by(id=data['author_id']).first()
+    author = Author.query.filter_by(name=data['author_name']).first()
     if not author:
         return resource_not_found('author')
     
     name = data['name']
-    author_id = data['author_id']
+    author_id = author.id
     platform = data['platform']
     completion_date = data['completion_date']
     
