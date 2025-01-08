@@ -13,7 +13,7 @@ class AuthorSchema(ma.Schema):
 
 class CourseSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'name', 'author_id', 'platform', 'completion_date', 'author_name' )
+        fields = ('id', 'name', 'platform', 'completion_date', 'author_name' )
     
     # author_name = fields.Nested(AuthorSchema)
     author_name = fields.Function(lambda obj: obj.author.name if obj.author else None)

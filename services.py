@@ -12,16 +12,23 @@ def resource_not_found(resource_name):
     return {"error": f"{resource_name} nie został znaleziony"}
 
 
+def get_or_create_author(author_name):
+    author = Author.query.filter_by(name=author_name).first()
+    if not author:
+        new_author = Author(author_name)
+        db.session.add(new_author)
+        db.session.commit()
+        
+        return new_author
+
 def get_all_courses():
     courses = Course.query.all()  
     return courses_schema.dump(courses)
 
 
 def create_course(data):
-    author = Author.query.filter_by(name=data['author_name']).first()
-    if not author:
-        return resource_not_found('author')
-    
+    author_name = data['author_name']
+    author = get_or_create_author(author_name)
     name = data['name']
     author_id = author.id
     platform = data['platform']
@@ -59,7 +66,7 @@ def delete_course(id):
     
     db.session.delete(course)
     db.session.commit()
-    return course_schema.dump(course)
+    return {"msg": f"Usunięto kurs"}
 
 
 def get_all_authors():
@@ -96,5 +103,5 @@ def delete_author(id):
     
     db.session.delete(author)
     db.session.commit()
-    return author_schema.dump(author)
+    return {"msg": f"Usunięto autora"}
     
