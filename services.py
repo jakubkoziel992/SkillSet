@@ -29,6 +29,7 @@ def get_all_courses():
 def create_course(data):
     author_name = data['author_name']
     author = get_or_create_author(author_name)
+    
     name = data['name']
     author_id = author.id
     platform = data['platform']

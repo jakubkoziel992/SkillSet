@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from models import Course, Author
 from schemas import CourseSchema, AuthorSchema
 import services
@@ -14,12 +14,15 @@ def health_check():
 @blueprint.route('/info', methods=['GET'])
 def get_info():
     return jsonify(hostname=socket.gethostname())
+
+@blueprint.route('/')
+def home():
+    return render_template('base.html')
     
-
-
 @blueprint.route('/course', methods=['GET'])
 def get_courses():
-    return jsonify(services.get_all_courses() )
+    courses = services.get_all_courses()
+    return render_template('index.html', courses=courses)
 
 @blueprint.route('/course', methods=['POST'])
 def add_course():    
@@ -40,9 +43,8 @@ def delete_course(id):
 
 @blueprint.route('/author', methods=['GET'])
 def get_authors():
-    authors = Author.query.all()
-    return jsonify(services.get_all_authors())
-
+    authors = services.get_all_authors()
+    return render_template('authors.html', authors=authors)
 
 @blueprint.route('/author', methods=['POST'])
 def add_author():
