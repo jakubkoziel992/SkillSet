@@ -1,0 +1,43 @@
+/* Stylizacja ogólna dla kontenerów */
+.container {
+    margin-top: 20px;
+    padding: 20px;
+}
+
+/* Stylizacja tabel */
+.table {
+    width: 100%; /* Tabela zajmuje całą szerokość kontenera */
+    border-collapse: collapse; /* Usuwa odstępy między komórkami */
+    text-align: center; /* Wyśrodkowanie tekstu */
+    font-size: 16px;
+    margin: 0 auto; /* Wyśrodkowanie tabeli */
+}
+
+/* Nagłówek tabeli */
+.table thead {
+    background-color: #343a40; /* Ciemne tło */
+    color: white; /* Jasny kolor tekstu */
+    text-transform: uppercase; /* Wielkie litery */
+}
+
+/* Wiersze tabeli */
+.table tbody tr:nth-child(odd) {
+    background-color: #f8f9fa; /* Jasnoszary kolor */
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #ffffff; /* Biały kolor */
+}
+
+/* Obramowanie komórek */
+.table th, 
+.table td {
+    border: 1px solid #dee2e6; /* Jasnoszare obramowanie */
+    padding: 10px; /* Wewnętrzne odstępy */
+}
+
+/* Dodanie większego obramowania dla nagłówka */
+.table th {
+    border-bottom: 2px solid #dee2e6;
+    font-weight: bold;
+}
