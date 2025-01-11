@@ -17,7 +17,7 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <table class="table">
-            <thead>
+            <thead class="thead">
                 <tr>
                     <th>Author</th>
                     <th>Courses</th>
@@ -29,6 +29,18 @@
                 <tr>
                     <td>{{ author.name }}</td>
                     <td>{{ author.courses|join(', ') }}</td>
+                    <td>
+                        <a href="/author/edit/{{ author.id }}" class="action-btn edit">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <form action="/author/{{ author.id }}/" method="POST" style="display:inline;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="action-btn delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                    
                 </tr>
                 {% endfor %}
             </tbody>

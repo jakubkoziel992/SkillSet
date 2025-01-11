@@ -32,6 +32,18 @@
                     <td>{{ course.platform }}</td>
                     <td>{{ course.author_name }}</td>
                     <td>{{ course.completion_date }}</td>
+                    <td>
+                        <a href="/course/edit/{{ course.id }}" class="action-btn edit">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <form action="/course/{{ course.id }}/" method="POST" style="display:inline;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="action-btn delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+
                 </tr>
                 {% endfor %}
             </tbody>
