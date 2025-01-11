@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}My Completed Courses{% endblock %}
+
+{% block content %}
+<h1>Courses</h1>
+<HR>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Platform</th>
+            <th>Author</th>
+            <th>Completion Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for course in courses %}
+        <tr>
+            <td>{{ course.name }}</td>
+            <td>{{ course.platform }}</td>
+            <td>{{ course.author_name }}</td>
+            <td>{{ course.completion_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

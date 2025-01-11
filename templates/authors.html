@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Course Authors
+{% endblock %}
+
+{% block content %}
+<h1>Authors</h1>
+<HR>
+<table>
+    <thead>
+        <th>Author</th>
+        <th>Courses</th>
+    </thead>
+    <tbody>
+        {% for author in authors %}
+        <tr>
+            <td>{{ author.name }}</td>
+            <td>{{ author.courses|join(', ') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
