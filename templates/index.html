@@ -36,7 +36,7 @@
                         <a href="/course/edit/{{ course.id }}" class="action-btn edit">
                             <i class="bi bi-pencil-square"></i>
                         </a>
-                        <form action="/course/{{ course.id }}/" method="POST" style="display:inline;">
+                        <form action="{{ url_for("api.delete_course", id=course.id) }}" method="POST" style="display:inline;">
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="action-btn delete">
                                 <i class="bi bi-trash"></i>
