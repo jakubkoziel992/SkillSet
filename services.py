@@ -11,6 +11,18 @@ author_schema = AuthorSchema()
 def resource_not_found(resource_name):
     return {"error": f"{resource_name} nie został znaleziony"}
 
+def get_author_by_id(id):
+    author = Author.query.get(id)
+    if not author:
+        return None
+    return author
+
+def get_course_by_id(id):
+    course = Course.query.get(id)
+    if not course:
+        return None
+    return course
+
 
 def get_or_create_author(author_name):
     author = Author.query.filter_by(name=author_name).first()
@@ -20,21 +32,20 @@ def get_or_create_author(author_name):
         db.session.commit()
         
         return new_author
+    
+    return author
 
 def get_all_courses():
     courses = Course.query.all()  
     return courses_schema.dump(courses)
 
 
-def create_course(data):
-    author_name = data['author_name']
+def create_course(name, author_name, platform, completion_date):
+    print(author_name)
     author = get_or_create_author(author_name)
+    print(author.id)
     
-    name = data['name']
-    author_id = author.id
-    platform = data['platform']
-    completion_date = data['completion_date']
-    
+    author_id = author.id    
     course = Course(name, author_id, platform, completion_date)
     db.session.add(course)
     db.session.commit()
@@ -42,19 +53,17 @@ def create_course(data):
     return course_schema.dump(course)
 
 
-def update_course(data, id):
+def update_course(name, author_name, platform, completion_date, id):
     course = Course.query.get(id)
     if not course:
         return resource_not_found('course')
     
-    if 'name' in data:
-        course.name = data['name']
-    elif 'author_id' in data:
-        course.author_id = data['author_id']
-    elif 'platform' in data:
-        course.platform = data['platform']
-    elif 'completion_date' in data:
-        course.completion_date = data['completion_date']
+    author = get_or_create_author(author_name)
+    
+    course.name = name
+    course.author_id = author.id
+    course.platform = platform
+    course.completion_date = completion_date
 
     db.session.commit()
     return course_schema.dump(course)
