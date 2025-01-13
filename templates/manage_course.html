@@ -1,0 +1,15 @@
+<form method="POST" action="{{ url_for('api.update_course', id=id) if edit else url_for(api.add_course) }}">
+    {% if edit %}
+    <input type="hidden" name="_method" value="PATCH">
+    {% endif %}
+
+    {{form.csrf_token}}
+    <div class="form-group">
+        {{form.name.label }} : {{ form.name }}
+        {{form.author_name.label }} : {{ form.author_name }}
+        {{form.platform.label }} : {{ form.platform }}
+        {{form.completion_date.label }} : {{ form.completion_date(class="form-control", type="date") }}
+    </div>
+
+    <input type="submit" value={{ 'Edit' if edit else 'Add'}}>
+</form>

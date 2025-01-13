@@ -1,0 +1,11 @@
+<form method="POST" action="{{ url_for('api.update_author', id=id) if edit else url_for('api.add_author') }}">
+    {% if edit %}
+    <input type="hidden" name="_method" value="PUT">
+    {% endif %}
+
+    {{form.csrf_token}}
+    <div class="form-group">
+        {{form.name.label }} : {{ form.name }}
+    </div>
+    <input type="submit" value={{ 'Edit' if edit else 'Add'}}>
+</form>
