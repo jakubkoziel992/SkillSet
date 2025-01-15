@@ -1,15 +1,40 @@
-<form method="POST" action="{{ url_for('api.update_course', id=id) if edit else url_for(api.add_course) }}">
+<form method="POST" action="{{ url_for('api.update_course', id=id) if edit else url_for('api.add_course') }}" class="needs-validation" novalidate>
     {% if edit %}
-    <input type="hidden" name="_method" value="PATCH">
+        <!-- Ukryte pole dla metody PATCH -->
+        <input type="hidden" name="_method" value="PATCH">
     {% endif %}
 
-    {{form.csrf_token}}
-    <div class="form-group">
-        {{form.name.label }} : {{ form.name }}
-        {{form.author_name.label }} : {{ form.author_name }}
-        {{form.platform.label }} : {{ form.platform }}
-        {{form.completion_date.label }} : {{ form.completion_date(class="form-control", type="date") }}
+    <!-- CSRF Token -->
+    {{ form.csrf_token }}
+
+    <!-- Nagłówek -->
+    <h2 class="mb-4 text-center">{{ 'Edit Course' if edit else 'Add Course' }}</h2>
+
+    <!-- Formularz z polami w jednej linii -->
+    <div class="mb-3 d-flex align-items-center">
+        <label for="course-name" class="form-label me-3" style="min-width: 150px;">{{ form.name.label }}</label>
+        {{ form.name(class="form-control", id="course-name", placeholder="Enter course name", style="flex: 1;") }}
     </div>
 
-    <input type="submit" value={{ 'Edit' if edit else 'Add'}}>
+    <div class="mb-3 d-flex align-items-center">
+        <label for="author-name" class="form-label me-3" style="min-width: 150px;">{{ form.author_name.label }}</label>
+        {{ form.author_name(class="form-control", id="author-name", placeholder="Enter author name", style="flex: 1;") }}
+    </div>
+
+    <div class="mb-3 d-flex align-items-center">
+        <label for="platform" class="form-label me-3" style="min-width: 150px;">{{ form.platform.label }}</label>
+        {{ form.platform(class="form-control", id="platform", placeholder="Enter platform name", style="flex: 1;") }}
+    </div>
+
+    <div class="mb-3 d-flex align-items-center">
+        <label for="completion-date" class="form-label me-3" style="min-width: 150px;">{{ form.completion_date.label }}</label>
+        {{ form.completion_date(class="form-control", id="completion-date", type="date", style="flex: 1;") }}
+    </div>
+
+    <!-- Przycisk wysyłania -->
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary">
+            {{ 'Edit' if edit else 'Add' }}
+        </button>
+    </div>
 </form>
