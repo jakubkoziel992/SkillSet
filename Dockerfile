@@ -1,11 +1,9 @@
-FROM ubuntu:24.10
-
-RUN apt update && apt install python3
-
-RUN pip install requirements.txt
+FROM python:3.9
 
 WORKDIR app
 
-COPY . app/
+COPY . /app
+
+RUN pip install -r requirements.txt
 
 CMD ["python" "app.py"]
