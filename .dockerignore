@@ -1,0 +1,12 @@
+#Python
+__pycache__
+venv
+
+.git
+.cache
+
+*.md
+!README*.md
+
+Dockerfile  
+.dockerignore
