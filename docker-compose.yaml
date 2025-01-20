@@ -12,6 +12,7 @@ services:
       - "5000:5000"
 
   db:
+    image: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
