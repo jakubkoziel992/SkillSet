@@ -4,6 +4,7 @@ services:
     build: ./app
     environment:
       - FLASK_ENV=${FLASK_ENV}
+      - SECRET_KEY=${SECRET_KEY}
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
@@ -20,3 +21,8 @@ services:
       - MYSQL_USER=${DB_USER}
     ports:
       - "3606:3606"
+    volumes:
+      - skillset_db_volume:/var/lib/mysql
+
+volumes:
+  skillset_db_volume:
