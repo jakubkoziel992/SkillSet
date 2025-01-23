@@ -1,6 +1,6 @@
 from flask import Flask
 from database import db
-from config import DevelopmentConfig, ProductionConfig
+from config import DevelopmentConfig, ProductionConfig, TestConfig
 from routes import blueprint
 from schemas import ma
 from os import environ, getenv
@@ -10,6 +10,8 @@ env = environ.get("FLASK_ENV", "dev")
 
 if env == "prod":
     config = ProductionConfig()
+elif env == "test":
+    config = TestConfig()
 else:
     config = DevelopmentConfig()
 
