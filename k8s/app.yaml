@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skillset-web-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: skillset-app
+  template:
+    metadata:
+      name: skillset-app
+      labels:
+        app: skillset-app
+    spec:
+      containers:
+      - name: skillset-app
+        image: kozijakinfo/skillset:2.0
+        ports:
+          - containerPort: 5000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 10  
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          periodSeconds: 20
+          failureThreshold: 5
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 5
+          periodSeconds: 10
+        env:
+          - name: DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: skillset-configmap
+                key: DB_NAME
+          - name: DB_USER
+            valueFrom:
+              configMapKeyRef:
+                name: skillset-configmap
+                key: DB_USER
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: skillset-secret
+                key: DB_PASSWORD
+          - name: DB_HOST
+            value: "db-svc.default.svc.cluster.local"
+          - name: FLASK_ENV
+            value: "test"
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: skillset-secret
+                key: SECRET_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: skillset-app
+  ports:
+    - port: 5000
+      targetPort: 5000
+
+
+
+
+
