@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skillset-configmap
+data:
+  DB_NAME: skillset
+  DB_USER: kuba
