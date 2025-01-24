@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skillset-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skillset-db
+  template:
+    metadata:
+      name: skillset-db
+      labels:
+        app: skillset-db
+    spec:
+      containers:
+      - name: skillset-db
+        image: mysql:9.2
+        env:
+          - name: MYSQL_USER
+            valueFrom:
+              configMapKeyRef:
+                name: skillset-configmap
+                key: DB_USER
+          - name: MYSQL_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: skillset-configmap
+                key: DB_NAME
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: skillset-secret
+                key: DB_PASSWORD
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: skillset-secret
+                key: DB_ROOT_PASSWORD
+        ports:
+          - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: skillset-db
+  ports:
+    - port: 3306
+      targetPort: 3306
+    
