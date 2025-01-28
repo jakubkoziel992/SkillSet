@@ -3,13 +3,13 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../app')))
 
 import pytest
-from app import app as flask_app
+from app import create_app
 from database import db
 from config import TestingConfig
 
 @pytest.fixture(scope='module')
 def app():
-    flask_app.config.from_object(TestingConfig)   
+    flask_app = create_app(TestingConfig)   
     with flask_app.app_context():
         yield flask_app
 
