@@ -41,9 +41,7 @@ def get_all_courses():
 
 
 def create_course(name, author_name, platform, completion_date):
-    print(author_name)
     author = get_or_create_author(author_name)
-    print(author.id)
     
     author_id = author.id    
     course = Course(name, author_id, platform, completion_date)
