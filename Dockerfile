@@ -6,11 +6,13 @@ COPY ./app/requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./app/ .
+COPY gunicorn.conf.py .
+
+COPY ./app .
 
 RUN addgroup python && adduser --no-create-home --disabled-password --ingroup python python
 USER python
 
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+CMD ["gunicorn"]
