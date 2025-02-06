@@ -12,7 +12,7 @@ services:
       - web
   web:
     #build: ./app
-    image: kozijakinfo/skillset:3.0
+    image: kozijakinfo/skillset:1.0
     container_name: web
     restart: always
     environment:
