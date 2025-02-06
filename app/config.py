@@ -21,9 +21,7 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'mysql+mysqlconnector://root:admin@127.0.0.1/skill_set')
-    
-    
-# config_dict = {
-#     "dev" : DevelopmentConfig,
-#     "prod" : ProductionConfig
-# }
+
+class TestingConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    TESTING = True
