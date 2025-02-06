@@ -1,21 +1,35 @@
 version: '3.9'
 services:
   web:
-    build: .
+    build: ./app
+    container_name: web
+    restart: always
     environment:
       - FLASK_ENV=${FLASK_ENV}
+      - SECRET_KEY=${SECRET_KEY}
       - DB_HOST=db
-      - DB_NAME=${MYSQL_DATABASE}
-      - DB_PASSWORD=${MYSQL_PASSWORD}
-      - DB_USER=${MYSQL_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_USER=${DB_USER}
     ports:
       - "5000:5000"
+    depends_on:
+      - db
 
   db:
+    image: mysql
+    container_name: db
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
     ports:
       - "3606:3606"
+    volumes:
+      - skillset_volume:/var/lib/mysql
+
+volumes:
+  skillset_volume:
+    name: skillset_db_volume
+    
