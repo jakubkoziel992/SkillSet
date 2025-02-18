@@ -16,6 +16,14 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
   to_port           = 22
 }
 
+resource "aws_vpc_security_group_egress_rule" "allow_out" {
+  security_group_id = aws_security_group.allow_ssh.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 0
+  ip_protocol       = -1
+  to_port           = 0
+}
+
 resource "aws_security_group" "skillset-rds-SG" {
   name        = "skillset-rds-SG"
   description = "Allow mysql from EC2"
@@ -28,7 +36,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_mysql_from_EC2" {
   from_port                    = 3306
   to_port                      = 3306
   ip_protocol                  = "tcp"
-  referenced_security_group_id = "sg-06f5267a52d7b61ff"
+  referenced_security_group_id = aws_security_group.allow_ssh.id
 }
 
 
