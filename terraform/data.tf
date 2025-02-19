@@ -10,11 +10,11 @@ data "http" "myip" {
 
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners = ["amazon"]
+  owners      = ["amazon"]
   #image_owner_alias = "amazon"
 
   filter {
-    name  = "name"
+    name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 
