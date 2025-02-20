@@ -15,6 +15,3 @@ resource "aws_db_instance" "mysql" {
   vpc_security_group_ids = [aws_security_group.skillset-rds-SG.id]
 }
 
-output "mysql_host" {
-  value = aws_db_instance.mysql.endpoint
-}
