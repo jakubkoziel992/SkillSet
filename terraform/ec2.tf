@@ -5,18 +5,27 @@ resource "aws_instance" "flask-app" {
 
   associate_public_ip_address = true
   vpc_security_group_ids = [
-    aws_security_group.allow_ssh.id
+    aws_security_group.skillset-web-SG.id
   ]
 
   key_name = aws_key_pair.flask.key_name
 
+  user_data = templatefile(
+    "../init_app.sh",
+    {
+      app_env     = "prod",
+      db_user     = var.username,
+      db_password = var.password,
+      db_host     = aws_db_instance.mysql.endpoint,
+      db_name     = aws_db_instance.mysql.db_name
+    }
+  )
+
+  user_data_replace_on_change = true
+
   root_block_device {
     volume_size = "20"
   }
-}
-
-output "ec2_instance_host" {
-  value = aws_instance.flask-app.public_dns
 }
 
 resource "tls_private_key" "my_key" {
