@@ -33,6 +33,7 @@ def create_app(config_name=None):
         except ProgrammingError:
             print("Table exists")
 
+
     return app
 
 if __name__ == "__main__":
