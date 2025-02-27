@@ -49,3 +49,53 @@ variable "parameter_group_name" {
   type        = string
   default     = "default.mysql8.0"
 }
+
+variable "availability_zone" {
+  description = "Ec2 instance availability zone"
+  type        = string
+  default     = "us-east-1a"
+}
+
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+}
+
+variable "flask_app" {
+  description = "FLASK_APP value"
+  type        = string
+  default     = "prod"
+}
+
+
+variable "volume_size" {
+  description = "Device volume size"
+  type        = string
+  default     = "20"
+}
+
+variable "key_algorithm" {
+  description = "SSH key algorithm"
+  type        = string
+  default     = "RSA"
+}
+
+variable "key_name" {
+  description = "SSH key name"
+  type        = string
+  default     = "flask-app"
+}
+
+variable "ingress_rules" {
+  description = "EC2 instance ingress rules"
+  type = map(object({
+    description       = string
+    security_group_id = optional(string)
+    cidr_ipv4         = string
+    from_port         = number
+    ip_protocol       = string
+    to_port           = number
+  }))
+
+}
