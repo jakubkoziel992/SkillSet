@@ -32,38 +32,52 @@ variable "ec2_ip" {
 variable "availability_zone" {
   description = "Ec2 instance availability zone"
   type        = string
-  #default     = "us-east-1a"
 }
 
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
-  #default     = "t2.micro"
+}
+
+variable "instance_name" {
+  description = "EC2 instance name"
+  type        = string
 }
 
 variable "flask_app" {
   description = "FLASK_APP value"
   type        = string
-  #default     = "prod"
+}
+
+variable "app_secret_key" {
+  description = "application SECRET_KEY"
+  type        = string
 }
 
 
 variable "volume_size" {
   description = "Device volume size"
   type        = string
-  #default     = "20"
 }
 
 variable "key_algorithm" {
   description = "SSH key algorithm"
   type        = string
-  #default     = "RSA"
 }
 
 variable "key_name" {
   description = "SSH key name"
   type        = string
-  #default     = "flask-app"
+}
+
+variable "private_key_permission" {
+  description = "SSH key permissions"
+  type        = string
+}
+
+variable "key_path" {
+  description = "SSH key path"
+  type        = string
 }
 
 variable "ingress_rules" {

@@ -8,9 +8,9 @@ resource "aws_db_instance" "mysql" {
   username             = var.username
   password             = var.password
   parameter_group_name = var.parameter_group_name
-  skip_final_snapshot  = true
-  publicly_accessible  = false
-  multi_az             = false
+  skip_final_snapshot  = var.snapshot
+  publicly_accessible  = var.public_access
+  multi_az             = var.multi_az
 
   vpc_security_group_ids = [aws_security_group.skillset-rds-SG.id]
 }
@@ -25,10 +25,12 @@ resource "aws_security_group" "skillset-rds-SG" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_mysql_from_EC2" {
-  description                  = "Allow traffic to Mysql for web-SG"
+  for_each = var.DB_ingress_rules
+
+  description                  = each.value.description
   security_group_id            = aws_security_group.skillset-rds-SG.id
-  from_port                    = 3306
-  to_port                      = 3306
-  ip_protocol                  = "tcp"
-  referenced_security_group_id = var.ec2_SG
+  from_port                    = each.value.port
+  to_port                      = each.value.port
+  ip_protocol                  = each.value.ip_protocol
+  referenced_security_group_id = each.value.port == 3306 ? var.ec2_SG : each.value.referenced_security_group_id
 }

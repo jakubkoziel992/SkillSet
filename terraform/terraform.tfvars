@@ -1,16 +1,22 @@
-db_name = "skillset"
-engine =  "mysql"
-engine_version = "8.0.40"
-instance_class = "db.t3.micro"
-allocated_storage = 10
-instance_identifier = "skillset-db"
+db_name              = "skillset"
+engine               = "mysql"
+engine_version       = "8.0.40"
+instance_class       = "db.t3.micro"
+allocated_storage    = 10
+instance_identifier  = "skillset-db"
 parameter_group_name = "default.mysql8.0"
-availability_zone = "us-east-1a"
-instance_type = "t2.micro"
-volume_size = "20"
-key_algorithm = "RSA"
-key_name = "flask-app"
-flask_app = "prod"
+availability_zone    = "us-east-1a"
+instance_type        = "t2.micro"
+instance_name        = "skillset-web"
+volume_size          = "20"
+key_algorithm        = "RSA"
+private_key_permission = "0600"
+key_path             =  "C:\\Users\\jakub.koziel\\Downloads/flask-app.pem"
+key_name             = "flask-app"
+flask_app            = "prod"
+snapshot             = true
+public_access        = false
+multi_az             = false
 
 ingress_rules = {
   "allow-ssh" = {
@@ -28,5 +34,13 @@ ingress_rules = {
     to_port     = 80
     ip_protocol = "tcp"
 
+  }
+}
+
+DB_ingress_rules = {
+  "allow-ssh" = {
+    description = "Allow traffic from EC2"
+    port        = 3306
+    ip_protocol = "tcp"
   }
 }

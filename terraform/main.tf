@@ -11,6 +11,10 @@ module "rds" {
   parameter_group_name = var.parameter_group_name
   vpc_id               = data.aws_vpc.default.id
   ec2_SG               = module.ec2.ec2_SG
+  snapshot             = var.snapshot
+  public_access        = var.public_access
+  multi_az             = var.multi_az 
+  DB_ingress_rules     = var.DB_ingress_rules 
 }
 
 module "ec2" {
@@ -19,9 +23,12 @@ module "ec2" {
   password          = var.password
   availability_zone = var.availability_zone
   instance_type     = var.instance_type
+  instance_name     = var.instance_name
   volume_size       = var.volume_size
   key_algorithm     = var.key_algorithm
   key_name          = var.key_name
+  private_key_permission = var.private_key_permission
+  key_path          = var.key_path
   flask_app         = var.flask_app
   ingress_rules     = var.ingress_rules
   ami_id            = data.aws_ami.ubuntu.id
@@ -29,4 +36,5 @@ module "ec2" {
   vpc_id            = data.aws_vpc.default.id
   db_host           = module.rds.mysql_host
   ec2_ip            = chomp(data.http.myip.response_body)
+  app_secret_key    = var.app_secret_key 
 }

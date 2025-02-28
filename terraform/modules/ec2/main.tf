@@ -5,7 +5,7 @@ resource "aws_security_group" "skillset-web-SG" {
   vpc_id      = var.vpc_id
 
   tags = {
-    Name = "skillset-web-SG"
+    Name = "${var.instance_name}-SG"
   }
 }
 
@@ -45,13 +45,14 @@ resource "aws_instance" "flask-app" {
   key_name = aws_key_pair.flask.key_name
 
   user_data = templatefile(
-    "./init_app.sh",
+    "../scripts/init_app.sh",
     {
       app_env     = var.flask_app,
       db_user     = var.username,
       db_password = var.password,
       db_host     = var.db_host,
       db_name     = var.db_name
+      secret_key  = var.app_secret_key
     }
   )
 
@@ -62,7 +63,7 @@ resource "aws_instance" "flask-app" {
   }
 
   tags = {
-    Name = "Skillset-web"
+    Name = var.instance_name
   }
 }
 
@@ -77,7 +78,7 @@ resource "aws_key_pair" "flask" {
 }
 
 resource "local_file" "private_key" {
-  filename        = "C:\\Users\\jakub.koziel\\Downloads/flask-app.pem"
+  filename        = var.key_path
   content         = tls_private_key.my_key.private_key_pem
-  file_permission = "0600"
+  file_permission = var.private_key_permission
 }
