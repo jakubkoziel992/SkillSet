@@ -91,3 +91,8 @@ variable "ingress_rules" {
     to_port           = number
   }))
 }
+
+variable "subnet_id" {
+  description = "ec2 subnet id"
+  type        = string
+}

@@ -96,17 +96,17 @@ variable "key_path" {
 
 variable "snapshot" {
   description = "final snapshot for the DB"
-  type        = bool       
+  type        = bool
 }
 
 variable "public_access" {
   description = "public_acces to the DB"
-  type        = bool      
+  type        = bool
 }
 
 variable "multi_az" {
   description = "define if DB is created in multiple availability zone"
-  type        = bool       
+  type        = bool
 }
 
 variable "ingress_rules" {
@@ -124,10 +124,20 @@ variable "ingress_rules" {
 variable "DB_ingress_rules" {
   description = "Mysql ingress rule"
   type = map(object({
-    description       = string
-    security_group_id = optional(string)
-    port              = number
-    ip_protocol       = string
-    referenced_security_group_id =  optional(string)
+    description                  = string
+    security_group_id            = optional(string)
+    port                         = number
+    ip_protocol                  = string
+    referenced_security_group_id = optional(string)
   }))
+}
+
+variable "subnet_id" {
+  description = "ec2 subnet id"
+  type        = string
+}
+
+variable "db_subnets" {
+  description = "DB subnets id"
+  type        = list(string)
 }

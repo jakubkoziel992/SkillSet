@@ -33,10 +33,10 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic" {
 #ec2
 resource "aws_instance" "flask-app" {
 
-  availability_zone = var.availability_zone
-  ami               = var.ami_id
-  instance_type     = var.instance_type
-
+  availability_zone           = var.availability_zone
+  ami                         = var.ami_id
+  instance_type               = var.instance_type
+  subnet_id                   = var.subnet_id
   associate_public_ip_address = true
   vpc_security_group_ids = [
     aws_security_group.skillset-web-SG.id

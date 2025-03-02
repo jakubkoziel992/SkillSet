@@ -1,7 +1,10 @@
 data "aws_region" "current" {}
 
-data "aws_vpc" "default" {
-  default = true
+data "aws_vpc" "vpc" {
+  filter {
+    name   = "tag:Name"
+    values = ["skillset-vpc"]
+  }
 }
 
 data "http" "myip" {
@@ -11,7 +14,7 @@ data "http" "myip" {
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["amazon"]
-  #image_owner_alias = "amazon"
+
 
   filter {
     name   = "name"

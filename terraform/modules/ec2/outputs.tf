@@ -13,3 +13,4 @@ output "ec2_SG" {
 output "ec2_ip" {
   value = aws_instance.flask-app.public_ip
 }
+

@@ -11,10 +11,15 @@ resource "aws_db_instance" "mysql" {
   skip_final_snapshot  = var.snapshot
   publicly_accessible  = var.public_access
   multi_az             = var.multi_az
+  db_subnet_group_name = aws_db_subnet_group.db-subnet-group.id
+
 
   vpc_security_group_ids = [aws_security_group.skillset-rds-SG.id]
 }
 
+resource "aws_db_subnet_group" "db-subnet-group" {
+  subnet_ids = var.db_subnets
+}
 
 
 resource "aws_security_group" "skillset-rds-SG" {
