@@ -9,7 +9,16 @@ variable "cidr_block" {
 }
 
 variable "public_subnets" {
-  description = "Map of subnets"
+  description = "Map of public subnets"
+  type        = map(object({
+    subnet_cidr             = string
+    availability_zone       = string
+    map_public_ip_on_launch = bool
+  })) 
+}
+
+variable "private_subnets" {
+  description = "Map of private subnets"
   type        = map(object({
     subnet_cidr             = string
     availability_zone       = string
