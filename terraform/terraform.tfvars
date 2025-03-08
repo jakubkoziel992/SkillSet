@@ -17,8 +17,6 @@ flask_app              = "prod"
 snapshot               = true
 public_access          = false
 multi_az               = false
-subnet_id              = "subnet-0072e33f2410f57dc"
-db_subnets             = ["subnet-05480c9acdd501994", "subnet-0b8a2080aa87fc6f3"]
 
 ingress_rules = {
   "allow-ssh" = {

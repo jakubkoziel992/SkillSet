@@ -74,7 +74,7 @@ variable "DB_ingress_rules" {
   }))
 }
 
-variable "db_subnets" {
+variable "private_subnets" {
   description = "DB subnets id"
   type        = list(string)
 }

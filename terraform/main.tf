@@ -15,7 +15,7 @@ module "rds" {
   public_access        = var.public_access
   multi_az             = var.multi_az
   DB_ingress_rules     = var.DB_ingress_rules
-  db_subnets           = var.db_subnets
+  private_subnets      = data.terraform_remote_state.vpc.outputs.private_subnets
 }
 
 module "ec2" {
@@ -38,5 +38,5 @@ module "ec2" {
   db_host                = module.rds.mysql_host
   ec2_ip                 = chomp(data.http.myip.response_body)
   app_secret_key         = var.app_secret_key
-  subnet_id              = var.subnet_id
+  subnet_id              = data.terraform_remote_state.vpc.outputs.public_subnet
 }

@@ -18,7 +18,7 @@ resource "aws_db_instance" "mysql" {
 }
 
 resource "aws_db_subnet_group" "db-subnet-group" {
-  subnet_ids = var.db_subnets
+  subnet_ids = var.private_subnets
 }
 
 

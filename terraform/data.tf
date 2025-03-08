@@ -26,3 +26,14 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 }
+
+data "terraform_remote_state" "vpc" {
+  backend = "local"
+  config = {
+    path = "./vpc/terraform.tfstate"
+  }
+}
+
+# output "private_subnet_ids" {
+#   value = data.terraform_remote_state.vpc.outputs.private_subnets
+# }

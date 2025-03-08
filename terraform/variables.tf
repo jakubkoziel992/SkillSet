@@ -132,12 +132,12 @@ variable "DB_ingress_rules" {
   }))
 }
 
-variable "subnet_id" {
-  description = "ec2 subnet id"
-  type        = string
-}
+# variable "subnet_id" {
+#   description = "ec2 subnet id"
+#   type        = string
+# }
 
-variable "db_subnets" {
-  description = "DB subnets id"
-  type        = list(string)
-}
+# variable "private_subnets" {
+#   description = "DB subnets id"
+#   type        = list(string)
+# }
