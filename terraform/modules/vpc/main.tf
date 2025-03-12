@@ -10,7 +10,7 @@ resource "aws_vpc" "skillset_vpc" {
 
 
 resource "aws_subnet" "public_subnet" {
-  for_each = var.public_subnets
+  for_each                = var.public_subnets
   vpc_id                  = aws_vpc.skillset_vpc.id
   cidr_block              = each.value.subnet_cidr
   availability_zone       = each.value.availability_zone
@@ -22,7 +22,7 @@ resource "aws_subnet" "public_subnet" {
 
 
 resource "aws_subnet" "private_subnet" {
-  for_each = var.private_subnets
+  for_each                = var.private_subnets
   vpc_id                  = aws_vpc.skillset_vpc.id
   cidr_block              = each.value.subnet_cidr
   availability_zone       = each.value.availability_zone
@@ -50,7 +50,7 @@ resource "aws_route_table" "public_route_table" {
 
   route {
     cidr_block = "0.0.0.0/0"
-     gateway_id = aws_internet_gateway.igw.id
+    gateway_id = aws_internet_gateway.igw.id
   }
 
   tags = {
@@ -59,24 +59,24 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table_association" "public_association" {
-  for_each = var.public_subnets
+  for_each       = var.public_subnets
   subnet_id      = aws_subnet.public_subnet[each.key].id
   route_table_id = aws_route_table.public_route_table.id
 }
 
 resource "aws_eip" "nat_elastics_ips" {
   for_each = var.public_subnets
-  domain = "vpc"
-  
+  domain   = "vpc"
+
   tags = {
     Name = "${var.name}-NAT-EIP-${index(keys(var.public_subnets), each.key) + 1}"
-  } 
+  }
 }
 
 resource "aws_nat_gateway" "nat_gateways" {
-  for_each = var.public_subnets
+  for_each      = var.public_subnets
   allocation_id = aws_eip.nat_elastics_ips[each.key].id
-  subnet_id = aws_subnet.public_subnet[each.key].id
+  subnet_id     = aws_subnet.public_subnet[each.key].id
 
   tags = {
     Name = "${var.name}-NAT-GW-${index(keys(var.public_subnets), each.key) + 1}"
@@ -85,7 +85,7 @@ resource "aws_nat_gateway" "nat_gateways" {
 
 resource "aws_route_table" "private_route_tables" {
   for_each = {
-    for k, v in aws_nat_gateway.nat_gateways:
+    for k, v in aws_nat_gateway.nat_gateways :
     "skillset-priv-subnet-0${index(keys(var.public_subnets), k) + 1}" => v
   }
 
@@ -98,16 +98,16 @@ resource "aws_route_table" "private_route_tables" {
 
   route {
     cidr_block = "0.0.0.0/0"
-     gateway_id = each.value.id
+    gateway_id = each.value.id
   }
 
   tags = {
-    Name = "${var.name}-priv-RT-${index(keys(var.private_subnets),each.key) + 1}"
+    Name = "${var.name}-priv-RT-${index(keys(var.private_subnets), each.key) + 1}"
   }
 }
 
 resource "aws_route_table_association" "private_associations" {
-  for_each = var.private_subnets
+  for_each       = var.private_subnets
   subnet_id      = aws_subnet.private_subnet[each.key].id
   route_table_id = aws_route_table.private_route_tables[each.key].id
 }
