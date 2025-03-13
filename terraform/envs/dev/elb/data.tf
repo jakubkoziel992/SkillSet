@@ -15,6 +15,12 @@ data "aws_subnet" "public" {
   id       = each.value
 }
 
+data "terraform_remote_state" "app" {
+  backend = "local"
+  config = {
+    path = "../app/terraform.tfstate"
+  }
+}
 
 # output "public_subnets" {
 #   value = [for subnet in data.aws_subnet.public: subnet.id]
