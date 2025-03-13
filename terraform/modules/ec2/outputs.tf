@@ -2,8 +2,8 @@ output "ip" {
   value = var.ec2_ip
 }
 
-output "ec2_instance_host" {
-  value = aws_instance.flask-app.public_dns
+output "ec2_id" {
+  value = aws_instance.flask-app.id
 }
 
 output "ec2_SG" {
