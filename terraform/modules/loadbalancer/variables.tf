@@ -3,8 +3,10 @@ variable "name" {
   type        = string
 }
 
+variable "vpc_id" {}
 
-variable "subnets" {
+
+variable "public_subnets" {
   description = "Public subnets id"
   type        = list(string)
 }

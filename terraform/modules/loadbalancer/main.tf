@@ -1,13 +1,7 @@
-data "aws_vpc" "default" {
-  default = true
-}
-
-
 resource "aws_security_group" "skillset-ELB-SG" {
   name        = "${var.name}-ELB-SG"
   description = "Allow HTTP request from anywhere"
-  vpc_id      = data.aws_vpc.default.id
-
+  vpc_id      = var.vpc_id
   tags = {
     Name = "${var.name}-ELB-SG"
   }
@@ -37,7 +31,7 @@ resource "aws_lb" "skillset-lb" {
   internal           = false
   load_balancer_type = var.lb_type
   security_groups    = [aws_security_group.skillset-ELB-SG.id]
-  subnets            = var.subnets
+  subnets            = var.public_subnets
 }
 
 
@@ -45,7 +39,7 @@ resource "aws_lb_target_group" "target_elb" {
   name        = "${var.name}-TG"
   port        = 80
   protocol    = "HTTP"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = var.vpc_id
   target_type = "instance"
   health_check {
     path                = "/health"
