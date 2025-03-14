@@ -1,3 +1,13 @@
+module "sg" {
+  source               = "../../../modules/sg"
+  vpc_id               = data.aws_vpc.default.id
+  ingress_rules        = var.ingress_rules
+  DB_ingress_rules     = var.DB_ingress_rules
+  ec2_ip               = chomp(data.http.myip.response_body)
+}
+
+
+
 module "rds" {
   source               = "../../../modules/rds-mysql"
   username             = var.username
@@ -10,12 +20,11 @@ module "rds" {
   allocated_storage    = var.allocated_storage
   parameter_group_name = var.parameter_group_name
   vpc_id               = data.aws_vpc.default.id
-  ec2_SG               = module.ec2.ec2_SG
   snapshot             = var.snapshot
   public_access        = var.public_access
   multi_az             = var.multi_az
-  DB_ingress_rules     = var.DB_ingress_rules
   private_subnets      = data.aws_subnets.default_subnets.ids
+  rds_sg               = module.sg.rds_sg
 }
 
 module "ec2" {
@@ -31,11 +40,10 @@ module "ec2" {
   private_key_permission = var.private_key_permission
   key_path               = var.key_path
   flask_app              = var.flask_app
-  ingress_rules          = var.ingress_rules
   db_name                = var.db_name
   vpc_id                 = data.aws_vpc.default.id
   db_host                = module.rds.mysql_host
-  ec2_ip                 = chomp(data.http.myip.response_body)
   app_secret_key         = var.app_secret_key
   subnet_id              = data.aws_subnet.ec2_subnet.id
+  ec2_sg                 = module.sg.ec2_sg
 }
