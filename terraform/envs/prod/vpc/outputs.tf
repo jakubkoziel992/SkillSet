@@ -3,8 +3,8 @@ output "private_subnets" {
   value       = module.vpc.private_subnets
 }
 
-output "public_subnet" {
+output "public_subnets" {
   description = "Public subnet 1"
-  value       = module.vpc.public_subnets[0]
+  value       = module.vpc.public_subnets
 
 }

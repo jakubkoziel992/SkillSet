@@ -4,6 +4,6 @@ output "private_subnets" {
 }
 
 output "public_subnets" {
-  description = "The private subnets created"
+  description = "The public subnets created"
   value       = [for subnet in aws_subnet.public_subnet : subnet.id]
 }
