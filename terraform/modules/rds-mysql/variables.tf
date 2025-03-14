@@ -1,8 +1,8 @@
 variable "vpc_id" {}
 
-variable "ec2_SG" {
-  description = "EC2 SG id from EC2 module"
-  type        = string
+variable "rds_sg" {
+  description   = "Security group ID"
+  type          = string 
 }
 
 variable "username" {
@@ -61,17 +61,6 @@ variable "public_access" {
 variable "multi_az" {
   description = "define if DB is created in multiple availability zone"
   type        = bool
-}
-
-variable "DB_ingress_rules" {
-  description = "Mysql ingress rule"
-  type = map(object({
-    description                  = string
-    security_group_id            = optional(string)
-    port                         = number
-    ip_protocol                  = string
-    referenced_security_group_id = string
-  }))
 }
 
 variable "private_subnets" {

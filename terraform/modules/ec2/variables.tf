@@ -1,5 +1,10 @@
 variable "vpc_id" {}
 
+variable "ec2_sg" {
+  description   = "Security group ID"
+  type          = string 
+}
+
 variable "username" {
   type = string
 }
@@ -16,11 +21,6 @@ variable "db_name" {
 
 variable "db_host" {
   description = "DB host from RDS module"
-  type        = string
-}
-
-variable "ec2_ip" {
-  description = "EC2 instance ipv4 address"
   type        = string
 }
 
@@ -73,18 +73,6 @@ variable "private_key_permission" {
 variable "key_path" {
   description = "SSH key path"
   type        = string
-}
-
-variable "ingress_rules" {
-  description = "EC2 instance ingress rules"
-  type = map(object({
-    description       = string
-    security_group_id = optional(string)
-    cidr_ipv4         = string
-    from_port         = number
-    ip_protocol       = string
-    to_port           = number
-  }))
 }
 
 variable "subnet_id" {
