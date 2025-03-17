@@ -10,8 +10,8 @@ module "sg" {
 
 module "rds" {
   source               = "../../../modules/rds-mysql"
-  username             = var.username
-  password             = var.password
+  username             = local.username
+  password             = local.password
   db_name              = var.db_name
   engine               = var.engine
   engine_version       = var.engine_version
@@ -29,8 +29,8 @@ module "rds" {
 
 module "ec2" {
   source                 = "../../../modules/ec2"
-  username               = var.username
-  password               = var.password
+  username               = local.username
+  password               = local.password
   availability_zone      = var.availability_zone
   instance_type          = var.instance_type
   instance_name          = var.instance_name
@@ -43,7 +43,7 @@ module "ec2" {
   db_name                = var.db_name
   vpc_id                 = data.aws_vpc.default.id
   db_host                = module.rds.mysql_host
-  app_secret_key         = var.app_secret_key
+  app_secret_key         = local.app_secret_key
   subnet_id              = data.aws_subnet.ec2_subnet.id
   ec2_sg                 = module.sg.ec2_sg
 }

@@ -21,3 +21,21 @@ data "aws_subnet" "public" {
 data "http" "myip" {
   url = "https://ifconfig.io"
 }
+
+data "aws_secretsmanager_secret" "secrets" {
+  name = "dev-skillset-sm-2"
+}
+
+data "aws_secretsmanager_secret_version" "app_secrets" {
+  secret_id = data.aws_secretsmanager_secret.secrets.id
+}
+
+locals  {
+  value = jsondecode(data.aws_secretsmanager_secret_version.app_secrets.secret_string)
+}
+
+locals {
+  username       = local.value["username"]
+  password       = local.value["password"]
+  app_secret_key = local.value["app_secret_key"]
+}
