@@ -15,3 +15,21 @@ data "terraform_remote_state" "vpc" {
     path = "../vpc/terraform.tfstate"
   }
 }
+
+data "aws_secretsmanager_secret" "secrets" {
+  name = "prod-skillset-sm"
+}
+
+data "aws_secretsmanager_secret_version" "app_secrets" {
+  secret_id = data.aws_secretsmanager_secret.secrets.id
+}
+
+locals  {
+  value = jsondecode(data.aws_secretsmanager_secret_version.app_secrets.secret_string)
+}
+
+locals {
+  username       = local.value["username"]
+  password       = local.value["password"]
+  app_secret_key = local.value["app_secret_key"]
+}

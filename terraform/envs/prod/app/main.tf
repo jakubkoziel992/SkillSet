@@ -8,8 +8,8 @@ module "sg" {
 
 module "rds" {
   source               = "../../../modules/rds-mysql"
-  username             = var.username
-  password             = var.password
+  username             = local.username
+  password             = local.password
   db_name              = var.db_name
   engine               = var.engine
   engine_version       = var.engine_version
@@ -27,8 +27,8 @@ module "rds" {
 
 module "ec2-1" {
   source                 = "../../../modules/ec2"
-  username               = var.username
-  password               = var.password
+  username               = local.username
+  password               = local.password
   availability_zone      = var.availability_zone
   instance_type          = var.instance_type
   instance_name          = var.instance_name
@@ -41,15 +41,15 @@ module "ec2-1" {
   db_name                = var.db_name
   vpc_id                 = data.aws_vpc.vpc.id
   db_host                = module.rds.mysql_host
-  app_secret_key         = var.app_secret_key
+  app_secret_key         = local.app_secret_key
   subnet_id              = data.terraform_remote_state.vpc.outputs.public_subnets[0]
   ec2_sg                 = module.sg.ec2_sg 
 }
 
 module "ec2-2" {
   source                 = "../../../modules/ec2"
-  username               = var.username
-  password               = var.password
+  username               = local.username
+  password               = local.password
   availability_zone      = "us-east-1b"
   instance_type          = var.instance_type
   instance_name          = "skillset-web-2"
@@ -62,7 +62,7 @@ module "ec2-2" {
   db_name                = var.db_name
   vpc_id                 = data.aws_vpc.vpc.id
   db_host                = module.rds.mysql_host
-  app_secret_key         = var.app_secret_key
+  app_secret_key         = local.app_secret_key
   subnet_id              = data.terraform_remote_state.vpc.outputs.public_subnets[1]
   ec2_sg                 = module.sg.ec2_sg 
 }
