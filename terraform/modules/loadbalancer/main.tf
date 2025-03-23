@@ -8,12 +8,13 @@ resource "aws_security_group" "skillset-ELB-SG" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "skillset-ELB-SG" {
-  description       = "Allow HTTP request from anywhere"
+  for_each = var.ingress_rules
+  description       = each.value.description
   security_group_id = aws_security_group.skillset-ELB-SG.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 80
-  ip_protocol       = "tcp"
-  to_port           = 80
+  cidr_ipv4         = each.value.cidr_ipv4
+  from_port         = each.value.port
+  ip_protocol       = each.value.protocol
+  to_port           = each.value.port
 }
 
 resource "aws_vpc_security_group_egress_rule" "skillset-ELB-SG" {
@@ -53,7 +54,7 @@ resource "aws_lb_target_group" "target_elb" {
 }
 
 resource "aws_lb_target_group_attachment" "main" {
-  for_each         = toset(var.ec2_instance_ids)
+  for_each         = var.enable_target_group_attachment ? toset(var.ec2_instance_ids) : toset([])
   target_group_arn = aws_lb_target_group.target_elb.arn
   target_id        = each.value
   port             = 80

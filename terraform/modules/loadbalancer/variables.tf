@@ -27,3 +27,19 @@ variable "target_type" {
   type = string
   default = "instance"
 }
+
+variable "ingress_rules" {
+  description = "ingress rules values"
+  type = map(object({
+    description = string
+    cidr_ipv4 = string
+    port = number
+    protocol = string
+  }))
+}
+
+variable "enable_target_group_attachment" {
+  description = "flag for launching resource"
+  type        = bool
+  default     = true 
+}
