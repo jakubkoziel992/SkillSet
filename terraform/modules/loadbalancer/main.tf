@@ -11,10 +11,11 @@ resource "aws_vpc_security_group_ingress_rule" "skillset-ELB-SG" {
   for_each = var.ingress_rules
   description       = each.value.description
   security_group_id = aws_security_group.skillset-ELB-SG.id
-  cidr_ipv4         = each.value.cidr_ipv4
+  cidr_ipv4         = lookup(each.value, "cidr_ipv4", null)
   from_port         = each.value.port
   ip_protocol       = each.value.protocol
   to_port           = each.value.port
+  referenced_security_group_id = each.value.cidr_ipv4 == null ? aws_security_group.skillset-ELB-SG.id : null
 }
 
 resource "aws_vpc_security_group_egress_rule" "skillset-ELB-SG" {
