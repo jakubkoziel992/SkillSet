@@ -6,7 +6,8 @@ module "alb" {
   vpc_id           =  data.aws_vpc.default.id
   public_subnets   = data.aws_subnets.default_subnets.ids
   ec2_instance_ids = []
-
+  ingress_rules    = var.ingress_rules
+  enable_target_group_attachment = true
 }
 
 
