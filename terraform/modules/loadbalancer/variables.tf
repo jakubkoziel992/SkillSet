@@ -21,3 +21,9 @@ variable "ec2_instance_ids" {
   description = "List of EC2 instance IDs to attach to the load balancer target group"
   type        = list(string)
 }
+
+variable "target_type" {
+  description = "Target group type"
+  type = string
+  default = "instance"
+}

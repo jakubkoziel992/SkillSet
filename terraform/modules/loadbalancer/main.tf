@@ -37,13 +37,13 @@ resource "aws_lb" "skillset-lb" {
 
 resource "aws_lb_target_group" "target_elb" {
   name        = "${var.name}-TG"
-  port        = 80
+  port        = 8000
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
-  target_type = "instance"
+  target_type = var.target_type
   health_check {
     path                = "/health"
-    port                = 80
+    port                = 8000
     protocol            = "HTTP"
     healthy_threshold   = 5
     unhealthy_threshold = 5
