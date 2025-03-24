@@ -10,14 +10,9 @@ variable "execution_role" {
     default = "arn:aws:iam::320183397498:role/ecsTaskExecutionRole"
 }
 
-variable "service_subnets" {
-  description = "Id subnets"
-  type        = list(string) 
-}
-
-variable "task_definitions"{
-  description = "Task details"
-  type        = map(object({
+variable "database_task_definition"{
+  description = "Database details"
+  type        = object({
     name    = string
     image   = string
     cpu     = number
@@ -29,18 +24,25 @@ variable "task_definitions"{
         protocol = string
         appProtocol = optional(string)
     }))
-    env_variables = list(object({
-      name = string
-      value = string 
+  })
+}
+
+
+variable "web_task_definition"{
+  description = "web details"
+  type        = object({
+    name    = string
+    image   = string
+    cpu     = number
+    memory  = number
+    port_mapping = list(object({
+        name = string
+        containerPort = number
+        hostPort = number
+        protocol = string
+        appProtocol = optional(string)
     }))
-    # health_check = optional(object({
-    #   command    = list(string)
-    #   interval   = number
-    #   timeout    = number
-    #   retries    = number
-    #   startPeriod = number
-    # }))
-  })) 
+  })
 }
 
 
