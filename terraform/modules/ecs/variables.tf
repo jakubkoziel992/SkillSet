@@ -25,6 +25,12 @@ variable "security_group_id" {
   type        = string
 }
 
+variable "assign_public_ip" {
+  description = "assign public ip"
+  type = bool
+  default = true
+}
+
 variable "task_definitions"{
   description = "Task details"
   type        = map(object({
