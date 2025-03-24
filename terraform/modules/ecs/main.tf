@@ -22,45 +22,76 @@ resource "aws_ecs_cluster_capacity_providers" "example" {
   capacity_providers = ["FARGATE"] 
 }
 
-resource "aws_ecs_task_definition" "tasks" {
-  for_each = var.task_definitions
-  family = each.value.name
+resource "aws_ecs_task_definition" "web" {
+  family = var.web_task_definition.name
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn=var.execution_role
-  cpu        = each.value.cpu
-  memory    = each.value.memory
+  cpu        = var.database_task_definition.cpu
+  memory    = var.database_task_definition.memory
   container_definitions = jsonencode([
     {
-      name      = each.value.name
-      image     = each.value.image
-      essential = true
-      cpu       = each.value.cpu
-      memory    = each.value.memory
-      portMappings = each.value.port_mapping
-      environment = each.value.env_variables
-      
-      # healthCheck = each.value.name == "web" ? {
-      #   command    = each.value.health_check.command
-      #   interval   = each.value.health_check.interval
-      #   timeout    = each.value.health_check.timeout
-      #   retries    = each.value.health_check.retries
-      #   startPeriod = each.value.health_check.startPeriod
-      # } : null
-    }])
-
+    name      = var.web_task_definition.name
+    image     = var.web_task_definition.image
+    essential = true
+    cpu       = var.web_task_definition.cpu
+    memory    = var.web_task_definition.memory
+    portMappings = var.web_task_definition.port_mapping
+    environment = [
+      { name = "DB_NAME", value = var.project_name},
+      { name = "DB_HOST", value = "mysql"},
+      { name = "FLASK_ENV", value = "prod"},
+      ]
+    secrets = [
+      { name = "DB_PASSWORD", valueFrom = var.password},
+      { name = "DB_USER", valueFrom = var.username},
+      { name = "SECRET_KEY", valueFrom = var.app_secret_key}
+      ]
+    } 
+  ])
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
   }
 }
-  
+
+resource "aws_ecs_task_definition" "database" {
+  family = var.database_task_definition.name
+  network_mode = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  execution_role_arn=var.execution_role
+  cpu        = var.database_task_definition.cpu
+  memory    = var.database_task_definition.memory
+  container_definitions = jsonencode([
+    {
+    name      = var.database_task_definition.name
+    image     = var.database_task_definition.image
+    essential = true
+    cpu       = var.database_task_definition.cpu
+    memory    = var.database_task_definition.memory
+    portMappings = var.database_task_definition.port_mapping
+    environment = [
+      { name = "MYSQL_DATABASE", value = var.project_name}
+    ]
+    secrets = [
+      { name = "MYSQL_PASSWORD", valueFrom = var.password},
+      { name = "MYSQL_ROOT_PASSWORD", valueFrom = var.password},
+      { name = "MYSQL_USER", valueFrom = var.username}
+      ]
+    }
+  ])
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "X86_64"
+  }
+
+}
 
 resource "aws_ecs_service" "service" {
   for_each = var.service_definitions
   name = each.value.service_name
   cluster = aws_ecs_cluster.skillset-cluster.id
-  task_definition = aws_ecs_task_definition.tasks["${each.value.service_name}"].arn
+  task_definition = each.key == "web" ? aws_ecs_task_definition.web.arn : aws_ecs_task_definition.database.arn
   launch_type = "FARGATE"
   desired_count = each.value.desired_count
   deployment_circuit_breaker {
@@ -95,7 +126,7 @@ resource "aws_ecs_service" "service" {
     container_port = load_balancer.value.container_port
   }
   }
-  depends_on =  [aws_ecs_cluster.skillset-cluster, aws_ecs_task_definition.tasks, aws_ecs_service.service["database"]]
+  depends_on =  [aws_ecs_cluster.skillset-cluster, aws_ecs_task_definition.database, aws_ecs_service.service["database"]]
 
 }
 

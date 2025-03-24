@@ -18,7 +18,7 @@ resource "random_password" "key" {
 
 
 resource "aws_secretsmanager_secret" "secret_manager" {
-  name = "${var.environment}-${var.name}-sm-2"
+  name = "${var.environment}-${var.name}-sm"
   description = "Application secrets for ${var.environment}"
 }
 

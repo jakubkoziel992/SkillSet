@@ -4,6 +4,24 @@ variable "project_name" {
   default     = "skillset" 
 }
 
+variable "password"{
+  description = "db username"
+  type        = string
+  sensitive = true
+}
+
+variable "username"{
+  description = "db username"
+  type        = string
+  sensitive = true
+}
+
+variable "app_secret_key" {
+  description = "application SECRET_KEY"
+  type        = string
+  sensitive   = true
+}
+
 variable "execution_role" {
     description = "execution role ARN"
     type    = string 
@@ -31,9 +49,9 @@ variable "assign_public_ip" {
   default = true
 }
 
-variable "task_definitions"{
-  description = "Task details"
-  type        = map(object({
+variable "database_task_definition"{
+  description = "Database details"
+  type        = object({
     name    = string
     image   = string
     cpu     = number
@@ -45,10 +63,25 @@ variable "task_definitions"{
         protocol = string
         appProtocol = optional(string)
     }))
-    env_variables = list(object({
-      name = string
-      value = string 
+  })
+}
+
+
+variable "web_task_definition"{
+  description = "web details"
+  type        = object({
+    name    = string
+    image   = string
+    cpu     = number
+    memory  = number
+    port_mapping = list(object({
+        name = string
+        containerPort = number
+        hostPort = number
+        protocol = string
+        appProtocol = optional(string)
     }))
+    
     # health_check = optional(object({
     #   command    = list(string)
     #   interval   = number
@@ -56,7 +89,7 @@ variable "task_definitions"{
     #   retries    = number
     #   startPeriod = number
     # }))
-  })) 
+  })
 }
 
 
