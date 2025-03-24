@@ -10,13 +10,16 @@ module "alb" {
   enable_target_group_attachment = false
 }
 
-
 module "ecs" {
   source = "../../../modules/ecs"
   service_subnets = data.terraform_remote_state.vpc.outputs.private_subnets
-  task_definitions = var.task_definitions
+  web_task_definition = var.web_task_definition
+  database_task_definition = var.database_task_definition
   service_definitions = var.service_definitions
   target_group_arn = module.alb.target_group_arn
   security_group_id = module.alb.security_group_id
   assign_public_ip = false
+  username = local.username
+  password = local.password
+  app_secret_key = local.app_secret_key
 }
