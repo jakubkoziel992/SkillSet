@@ -1,8 +1,8 @@
 variable "vpc_id" {}
 
 variable "ec2_sg" {
-  description   = "Security group ID"
-  type          = string 
+  description = "Security group ID"
+  type        = string
 }
 
 variable "username" {

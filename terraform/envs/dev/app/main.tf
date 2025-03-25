@@ -1,9 +1,9 @@
 module "sg" {
-  source               = "../../../modules/sg"
-  vpc_id               = data.aws_vpc.default.id
-  ingress_rules        = var.ingress_rules
-  DB_ingress_rules     = var.DB_ingress_rules
-  ec2_ip               = chomp(data.http.myip.response_body)
+  source           = "../../../modules/sg"
+  vpc_id           = data.aws_vpc.default.id
+  ingress_rules    = var.ingress_rules
+  DB_ingress_rules = var.DB_ingress_rules
+  ec2_ip           = chomp(data.http.myip.response_body)
 }
 
 

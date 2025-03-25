@@ -1,12 +1,12 @@
 variable "name" {
   description = "Project name"
-  type        = string 
+  type        = string
 }
 
 variable "environment" {
-    description = "Environment name"
-    type        = string  
-  
+  description = "Environment name"
+  type        = string
+
 }
 
 variable "username" {
@@ -16,7 +16,7 @@ variable "username" {
 variable "password" {
   type      = string
   sensitive = true
-  default = null
+  default   = null
 }
 
 
@@ -25,4 +25,9 @@ variable "app_secret_key" {
   type        = string
   sensitive   = true
   default     = null
+}
+
+variable "recovery_window" {
+  description = "Number of days that AWS Secrets Manager waits before it can delete the secret."
+  type        = number
 }

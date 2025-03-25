@@ -1,9 +1,9 @@
 module "sg" {
-  source               = "../../../modules/sg"
-  vpc_id               = data.aws_vpc.vpc.id
-  ingress_rules        = var.ingress_rules
-  DB_ingress_rules     = var.DB_ingress_rules
-  ec2_ip               = chomp(data.http.myip.response_body)
+  source           = "../../../modules/sg"
+  vpc_id           = data.aws_vpc.vpc.id
+  ingress_rules    = var.ingress_rules
+  DB_ingress_rules = var.DB_ingress_rules
+  ec2_ip           = chomp(data.http.myip.response_body)
 }
 
 module "rds" {
@@ -22,7 +22,7 @@ module "rds" {
   public_access        = var.public_access
   multi_az             = var.multi_az
   private_subnets      = data.terraform_remote_state.vpc.outputs.private_subnets
-  rds_sg               = module.sg.rds_sg 
+  rds_sg               = module.sg.rds_sg
 }
 
 module "ec2-1" {
@@ -43,7 +43,7 @@ module "ec2-1" {
   db_host                = module.rds.mysql_host
   app_secret_key         = local.app_secret_key
   subnet_id              = data.terraform_remote_state.vpc.outputs.public_subnets[0]
-  ec2_sg                 = module.sg.ec2_sg 
+  ec2_sg                 = module.sg.ec2_sg
 }
 
 module "ec2-2" {
@@ -64,5 +64,5 @@ module "ec2-2" {
   db_host                = module.rds.mysql_host
   app_secret_key         = local.app_secret_key
   subnet_id              = data.terraform_remote_state.vpc.outputs.public_subnets[1]
-  ec2_sg                 = module.sg.ec2_sg 
+  ec2_sg                 = module.sg.ec2_sg
 }

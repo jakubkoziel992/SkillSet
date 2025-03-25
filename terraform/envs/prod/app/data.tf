@@ -24,7 +24,7 @@ data "aws_secretsmanager_secret_version" "app_secrets" {
   secret_id = data.aws_secretsmanager_secret.secrets.id
 }
 
-locals  {
+locals {
   value = jsondecode(data.aws_secretsmanager_secret_version.app_secrets.secret_string)
 }
 
