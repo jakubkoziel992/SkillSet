@@ -16,6 +16,10 @@ variable "lb_type" {
   type        = string
 }
 
+variable "user_ip" {
+  description = "user ip"
+  type        = string
+}
 
 variable "ec2_instance_ids" {
   description = "List of EC2 instance IDs to attach to the load balancer target group"
@@ -24,22 +28,22 @@ variable "ec2_instance_ids" {
 
 variable "target_type" {
   description = "Target group type"
-  type = string
-  default = "instance"
+  type        = string
+  default     = "instance"
 }
 
 variable "ingress_rules" {
   description = "ingress rules values"
   type = map(object({
     description = string
-    cidr_ipv4 = optional(string)
-    port = number
-    protocol = string
+    cidr_ipv4   = optional(string)
+    port        = number
+    protocol    = string
   }))
 }
 
 variable "enable_target_group_attachment" {
   description = "flag for launching resource"
   type        = bool
-  default     = true 
+  default     = true
 }

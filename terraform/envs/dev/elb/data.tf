@@ -9,6 +9,10 @@ data "aws_subnets" "default_subnets" {
   }
 }
 
+data "http" "myip" {
+  url = "https://ifconfig.io"
+}
+
 
 data "aws_subnet" "public" {
   for_each = toset(data.aws_subnets.default_subnets.ids)

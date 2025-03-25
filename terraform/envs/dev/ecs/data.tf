@@ -9,6 +9,10 @@ data "aws_subnets" "default_subnets" {
   }
 }
 
+data "http" "myip" {
+  url = "https://ifconfig.io"
+}
+
 data "aws_secretsmanager_secret" "secrets" {
   name = "dev-skillset-sm-10"
 }
@@ -17,7 +21,7 @@ data "aws_secretsmanager_secret_version" "app_secrets" {
   secret_id = data.aws_secretsmanager_secret.secrets.arn
 }
 
-locals  {
+locals {
   value = data.aws_secretsmanager_secret_version.app_secrets.arn
 }
 
