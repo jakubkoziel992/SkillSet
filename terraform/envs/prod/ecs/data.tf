@@ -12,15 +12,19 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
+data "http" "myip" {
+  url = "https://ifconfig.io"
+}
+
 data "aws_secretsmanager_secret" "secrets" {
-  name = "prod-skillset-sm"
+  name = "prod-skillset-secrets"
 }
 
 data "aws_secretsmanager_secret_version" "app_secrets" {
   secret_id = data.aws_secretsmanager_secret.secrets.arn
 }
 
-locals  {
+locals {
   value = data.aws_secretsmanager_secret_version.app_secrets.arn
 }
 
