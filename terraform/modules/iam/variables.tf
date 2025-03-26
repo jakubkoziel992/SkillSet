@@ -1,6 +1,6 @@
 variable "policy_name" {
   description = "Policy name"
-  type = string
+  type        = string
 }
 
 variable "iam_policy" {

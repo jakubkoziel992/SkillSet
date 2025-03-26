@@ -1,3 +1,10 @@
+module "iam" {
+  source = "../../../modules/iam"
+  policy_name = "SecretsManagerGetSecretsValue"
+  iam_policy = data.aws_iam_policy_document.getsecrets.json
+  iam_role = "ecsTaskExecutionRole"
+}
+
 module "alb" {
   source                         = "../../../modules/loadbalancer"
   name                           = "skillset"
