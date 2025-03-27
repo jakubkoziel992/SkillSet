@@ -12,12 +12,13 @@ resource "aws_security_group" "skillset-web-SG" {
 resource "aws_vpc_security_group_ingress_rule" "example" {
   for_each = var.ingress_rules
 
-  description       = each.value.description
-  security_group_id = aws_security_group.skillset-web-SG.id
-  cidr_ipv4         = each.value.from_port == 22 ? "${var.ec2_ip}/32" : each.value.cidr_ipv4
-  from_port         = each.value.from_port
-  ip_protocol       = each.value.ip_protocol
-  to_port           = each.value.to_port
+  description                  = each.value.description
+  security_group_id            = aws_security_group.skillset-web-SG.id
+  cidr_ipv4                    = each.value.from_port == 22 ? "${var.ec2_ip}/32" : null
+  from_port                    = each.value.from_port
+  ip_protocol                  = each.value.ip_protocol
+  to_port                      = each.value.to_port
+  referenced_security_group_id = each.key == "allow-elb" ? var.elb_sg_id : null
 }
 
 resource "aws_vpc_security_group_egress_rule" "allow_all_traffic" {

@@ -99,11 +99,11 @@ variable "ingress_rules" {
   description = "EC2 instance ingress rules"
   type = map(object({
     description       = string
-    security_group_id = optional(string)
-    cidr_ipv4         = string
+    cidr_ipv4         = optional(string)
     from_port         = number
     ip_protocol       = string
     to_port           = number
+    referenced_security_group_id = optional(string)
   }))
 }
 
@@ -122,7 +122,6 @@ variable "alb_ingress_rules" {
   description = "ingress rules values"
   type = map(object({
     description = string
-    cidr_ipv4   = string
     port        = number
     protocol    = string
   }))

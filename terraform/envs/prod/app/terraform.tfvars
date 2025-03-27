@@ -27,13 +27,12 @@ ingress_rules = {
     ip_protocol = "tcp"
 
   },
-  "allow-http" = {
-    description = "allow_all_traffic_to_port_80"
+  "allow-elb" = {
+    description = "Allow traffic from the ELB security group"
     cidr_ipv4   = "0.0.0.0/0"
-    from_port   = 80
-    to_port     = 80
+    from_port   = 8000
+    to_port     = 8000
     ip_protocol = "tcp"
-
   }
 }
 
@@ -46,9 +45,8 @@ DB_ingress_rules = {
 }
 
 alb_ingress_rules = {
-  "http" = {
+  "allo" = {
     description = "Allow HTTP request from anywhere"
-    cidr_ipv4  = "0.0.0.0/0"
     port       = 80
     protocol   = "tcp"
   }

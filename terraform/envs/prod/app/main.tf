@@ -1,9 +1,18 @@
+locals {
+  ip_address = chomp(data.http.myip.response_body)
+  vpc_id     = data.aws_vpc.vpc.id
+  public_subnet_ids = data.terraform_remote_state.vpc.outputs.public_subnets
+}
+
+
 module "sg" {
   source           = "../../../modules/sg"
-  vpc_id           = data.aws_vpc.vpc.id
+  vpc_id           = local.vpc_id
   ingress_rules    = var.ingress_rules
   DB_ingress_rules = var.DB_ingress_rules
-  ec2_ip           = chomp(data.http.myip.response_body)
+  ec2_ip           = local.ip_address
+  elb_sg_id        = module.lb.security_group_id 
+
 }
 
 module "rds" {
@@ -17,7 +26,7 @@ module "rds" {
   instance_identifier  = var.instance_identifier
   allocated_storage    = var.allocated_storage
   parameter_group_name = var.parameter_group_name
-  vpc_id               = data.aws_vpc.vpc.id
+  vpc_id               = local.vpc_id
   snapshot             = var.snapshot
   public_access        = var.public_access
   multi_az             = var.multi_az
@@ -39,10 +48,10 @@ module "ec2-1" {
   key_path               = var.key_path
   flask_app              = var.flask_app
   db_name                = var.db_name
-  vpc_id                 = data.aws_vpc.vpc.id
+  vpc_id                 = local.vpc_id
   db_host                = module.rds.mysql_host
   app_secret_key         = local.app_secret_key
-  subnet_id              = data.terraform_remote_state.vpc.outputs.public_subnets[0]
+  subnet_id              = local.public_subnet_ids[0]
   ec2_sg                 = module.sg.ec2_sg
 }
 
@@ -60,22 +69,22 @@ module "ec2-2" {
   key_path               = "C:\\Users\\jakub.koziel\\Downloads/flask-app2.pem"
   flask_app              = var.flask_app
   db_name                = var.db_name
-  vpc_id                 = data.aws_vpc.vpc.id
+  vpc_id                 = local.vpc_id
   db_host                = module.rds.mysql_host
   app_secret_key         = local.app_secret_key
-  subnet_id              = data.terraform_remote_state.vpc.outputs.public_subnets[1]
+  subnet_id              = local.public_subnet_ids[1]
   ec2_sg                 = module.sg.ec2_sg
 }
 
 
 module "lb" {
   source           = "../../../modules/loadbalancer"
-  vpc_id           = data.aws_vpc.vpc.id
+  vpc_id           = local.vpc_id
   name             = "skillset"
   lb_type          = "application"
-  public_subnets   = data.terraform_remote_state.vpc.outputs.public_subnets
+  public_subnets   = local.public_subnet_ids
   ec2_instance_ids = [module.ec2-1.ec2_id, module.ec2-2.ec2_id]
-  user_ip          = chomp(data.http.myip.response_body)
+  user_ip          = local.ip_address
   ingress_rules    = var.alb_ingress_rules
   enable_target_group_attachment = true
 }

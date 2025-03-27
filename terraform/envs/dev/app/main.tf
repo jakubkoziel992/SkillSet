@@ -1,9 +1,16 @@
+locals {
+  ip_address = chomp(data.http.myip.response_body)
+  vpc_id     = data.aws_vpc.default.id
+  subnets_id = data.aws_subnets.default_subnets.ids
+}
+
 module "sg" {
   source           = "../../../modules/sg"
-  vpc_id           = data.aws_vpc.default.id
+  vpc_id           = local.vpc_id
   ingress_rules    = var.ingress_rules
   DB_ingress_rules = var.DB_ingress_rules
-  ec2_ip           = chomp(data.http.myip.response_body)
+  ec2_ip           = local.ip_address
+  elb_sg_id        = module.lb.security_group_id 
 }
 
 
@@ -19,11 +26,11 @@ module "rds" {
   instance_identifier  = var.instance_identifier
   allocated_storage    = var.allocated_storage
   parameter_group_name = var.parameter_group_name
-  vpc_id               = data.aws_vpc.default.id
+  vpc_id               = local.vpc_id
   snapshot             = var.snapshot
   public_access        = var.public_access
   multi_az             = var.multi_az
-  private_subnets      = data.aws_subnets.default_subnets.ids
+  private_subnets      = local.subnets_id
   rds_sg               = module.sg.rds_sg
 }
 
@@ -41,7 +48,7 @@ module "ec2" {
   key_path               = var.key_path
   flask_app              = var.flask_app
   db_name                = var.db_name
-  vpc_id                 = data.aws_vpc.default.id
+  vpc_id                 = local.vpc_id
   db_host                = module.rds.mysql_host
   app_secret_key         = local.app_secret_key
   subnet_id              = data.aws_subnet.ec2_subnet.id
@@ -52,21 +59,10 @@ module "lb" {
   source           = "../../../modules/loadbalancer"
   name             = "skillset"
   lb_type          = "application"
-  vpc_id           = data.aws_vpc.default.id
-  public_subnets   = data.aws_subnets.default_subnets.ids
+  vpc_id           = local.vpc_id
+  public_subnets   = local.subnets_id
   ec2_instance_ids = [module.ec2.ec2_id]
   ingress_rules    = var.alb_ingress_rules
-  user_ip          = chomp(data.http.myip.response_body)
+  user_ip          = local.ip_address
   enable_target_group_attachment = true
-}
-
-module "lb" {
-  source           = "../../../modules/loadbalancer"
-  name             = "skillset"
-  lb_type          = "application"
-  vpc_id           = data.aws_vpc.default.id
-  public_subnets   = data.aws_subnets.default_subnets.ids
-  ec2_instance_ids = [module.ec2.ec2_id]
-  ingress_rules    = var.alb_ingress_rules
-  user_ip          = chomp(data.http.myip.response_body)
 }
