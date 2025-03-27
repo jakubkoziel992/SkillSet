@@ -24,6 +24,7 @@ variable "user_ip" {
 variable "ec2_instance_ids" {
   description = "List of EC2 instance IDs to attach to the load balancer target group"
   type        = list(string)
+  default     = null
 }
 
 variable "target_type" {
@@ -45,5 +46,5 @@ variable "ingress_rules" {
 variable "enable_target_group_attachment" {
   description = "flag for launching resource"
   type        = bool
-  default     = true
+  default     = false
 }

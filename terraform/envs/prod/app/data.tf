@@ -16,8 +16,14 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
+# data "aws_instances" "ec2_instances" {
+#   instance_tags = {
+#     Name = "skillset-web-*"
+#   }
+# }
+
 data "aws_secretsmanager_secret" "secrets" {
-  name = "prod-skillset-sm"
+  name = "prod-skillset-secrets"
 }
 
 data "aws_secretsmanager_secret_version" "app_secrets" {

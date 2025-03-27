@@ -44,3 +44,13 @@ DB_ingress_rules = {
     ip_protocol = "tcp"
   }
 }
+
+
+alb_ingress_rules = {
+  "http" = {
+    description = "Allow HTTP request from anywhere"
+    cidr_ipv4  = "0.0.0.0/0"
+    port       = 80
+    protocol   = "tcp"
+  }
+}

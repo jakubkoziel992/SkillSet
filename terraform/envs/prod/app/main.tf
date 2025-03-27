@@ -66,3 +66,16 @@ module "ec2-2" {
   subnet_id              = data.terraform_remote_state.vpc.outputs.public_subnets[1]
   ec2_sg                 = module.sg.ec2_sg
 }
+
+
+module "lb" {
+  source           = "../../../modules/loadbalancer"
+  vpc_id           = data.aws_vpc.vpc.id
+  name             = "skillset"
+  lb_type          = "application"
+  public_subnets   = data.terraform_remote_state.vpc.outputs.public_subnets
+  ec2_instance_ids = [module.ec2-1.ec2_id, module.ec2-2.ec2_id]
+  user_ip          = chomp(data.http.myip.response_body)
+  ingress_rules    = var.alb_ingress_rules
+  enable_target_group_attachment = true
+}

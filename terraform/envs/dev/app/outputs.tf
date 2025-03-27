@@ -5,6 +5,10 @@
 # output "rds_vpc_id" {
 #   value = module.rds.rds_vpc_id
 # }
+output "elb_address" {
+  value = module.lb.elb_address
+}
+
 output "ec2_id" {
   value = module.ec2.ec2_id
 }
