@@ -24,6 +24,7 @@ variable "user_ip" {
 variable "ec2_instance_ids" {
   description = "List of EC2 instance IDs to attach to the load balancer target group"
   type        = list(string)
+  default     = null
 }
 
 variable "target_type" {

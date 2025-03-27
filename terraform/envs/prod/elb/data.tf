@@ -18,6 +18,11 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
+data "http" "myip" {
+  url = "https://ifconfig.io"
+}
+
+
 
 
 

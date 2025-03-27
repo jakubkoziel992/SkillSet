@@ -117,3 +117,13 @@ variable "DB_ingress_rules" {
     referenced_security_group_id = optional(string)
   }))
 }
+
+variable "alb_ingress_rules" {
+  description = "ingress rules values"
+  type = map(object({
+    description = string
+    cidr_ipv4   = string
+    port        = number
+    protocol    = string
+  }))
+}

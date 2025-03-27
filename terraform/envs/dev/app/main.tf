@@ -47,3 +47,14 @@ module "ec2" {
   subnet_id              = data.aws_subnet.ec2_subnet.id
   ec2_sg                 = module.sg.ec2_sg
 }
+
+module "lb" {
+  source           = "../../../modules/loadbalancer"
+  name             = "skillset"
+  lb_type          = "application"
+  vpc_id           = data.aws_vpc.default.id
+  public_subnets   = data.aws_subnets.default_subnets.ids
+  ec2_instance_ids = [module.ec2.ec2_id]
+  ingress_rules    = var.alb_ingress_rules
+  user_ip          = chomp(data.http.myip.response_body)
+}

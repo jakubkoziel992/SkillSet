@@ -1,3 +1,9 @@
+locals {
+  ec2_map = var.enable_target_group_attachment ? { for k, v in var.ec2_instance_ids : k => v } : {}
+}
+
+
+
 resource "aws_security_group" "skillset-ELB-SG" {
   name        = "${var.name}-ELB-SG"
   description = "Allow HTTP request from anywhere"
@@ -56,7 +62,8 @@ resource "aws_lb_target_group" "target_elb" {
 }
 
 resource "aws_lb_target_group_attachment" "main" {
-  for_each         = var.enable_target_group_attachment ? toset(var.ec2_instance_ids) : toset([])
+  #for_each         = var.enable_target_group_attachment ? toset(var.ec2_instance_ids) : toset([])
+  for_each         = local.ec2_map 
   target_group_arn = aws_lb_target_group.target_elb.arn
   target_id        = each.value
   port             = 80
