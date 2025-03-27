@@ -59,3 +59,14 @@ module "lb" {
   user_ip          = chomp(data.http.myip.response_body)
   enable_target_group_attachment = true
 }
+
+module "lb" {
+  source           = "../../../modules/loadbalancer"
+  name             = "skillset"
+  lb_type          = "application"
+  vpc_id           = data.aws_vpc.default.id
+  public_subnets   = data.aws_subnets.default_subnets.ids
+  ec2_instance_ids = [module.ec2.ec2_id]
+  ingress_rules    = var.alb_ingress_rules
+  user_ip          = chomp(data.http.myip.response_body)
+}
