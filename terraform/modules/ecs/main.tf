@@ -1,16 +1,17 @@
 resource "aws_service_discovery_http_namespace" "skillset" {
-  name = "${var.project_name}-cluster"
+  name = "${var.project_name}-${var.environment}-ECS-cluster"
+
 }
 
 resource "aws_ecs_cluster" "skillset-cluster" {
-  name = "${var.project_name}-cluster"
+  name = "${var.project_name}-${var.environment}-ECS-cluster"
 
   service_connect_defaults {
     namespace = aws_service_discovery_http_namespace.skillset.arn
   }
 
   tags = {
-    Name = "${var.project_name}"
+    Name = "${var.project_name}-${var.environment}-ECS-cluster"
   }
 
   depends_on = [aws_service_discovery_http_namespace.skillset]

@@ -14,6 +14,16 @@ variable "password" {
   sensitive = true
 }
 
+variable "project_name" {
+  description = "The project name"
+  type        = string
+}
+
+variable "environment" {
+  description = "The name of the deployment environment"
+  type        = string
+}
+
 variable "db_name" {
   description = "Database name"
   type        = string

@@ -23,7 +23,7 @@ data "http" "myip" {
 }
 
 data "aws_secretsmanager_secret" "secrets" {
-  name = "dev-skillset-secrets"
+  name = "skillset-dev-secrets"
 }
 
 data "aws_secretsmanager_secret_version" "app_secrets" {

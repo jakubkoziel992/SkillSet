@@ -1,6 +1,6 @@
 module "sm" {
   source          = "../../../modules/secrets_manager"
-  name            = "skillset"
+  project_name    = "skillset"
   environment     = "prod"
   recovery_window = 0
   username        = var.username

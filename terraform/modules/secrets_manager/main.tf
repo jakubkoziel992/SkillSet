@@ -18,9 +18,13 @@ resource "random_password" "key" {
 
 
 resource "aws_secretsmanager_secret" "secret_manager" {
-  name                    = "${var.environment}-${var.name}-secrets"
+  name                    = "${var.project_name}-${var.environment}-secrets"
   description             = "Application secrets for ${var.environment}"
   recovery_window_in_days = var.recovery_window
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-secretsmanager"
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "secret_version" {

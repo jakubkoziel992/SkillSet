@@ -1,10 +1,10 @@
 resource "aws_security_group" "skillset-web-SG" {
-  name        = "skillset-SG"
-  description = "Allow SSH inbound traffic from owner IP"
+  name        = "${var.project_name}-${var.environment}-WEB-SG"
+  description = "Allow SSH inbound traffic from user IP"
   vpc_id      = var.vpc_id
 
   tags = {
-    Name = "skillset-SG"
+    Name = "${var.project_name}-${var.environment}-WEB-SG"
   }
 }
 
@@ -31,10 +31,13 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic" {
 }
 
 resource "aws_security_group" "skillset-rds-SG" {
-  name        = "skillset-rds-SG"
+  name        = "${var.project_name}-${var.environment}-RDS-SG"
   description = "Allow mysql from EC2"
   vpc_id      = var.vpc_id
 
+  tags = {
+    Name = "${var.project_name}-${var.environment}-RDS-SG"
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_mysql_from_EC2" {

@@ -1,3 +1,5 @@
+project_name = "skillset"
+environment  = "prod"
 database_task_definition = {
   name         = "mysql"
   image        = "320183397498.dkr.ecr.us-east-1.amazonaws.com/kozijakinfo/skillset-db:1.0"

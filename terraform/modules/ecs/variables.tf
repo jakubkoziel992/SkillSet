@@ -1,7 +1,11 @@
 variable "project_name" {
-  description = "Project name"
+  description = "The project name"
   type        = string
-  default     = "skillset"
+}
+
+variable "environment" {
+  description = "The name of the deployment environment"
+  type        = string
 }
 
 variable "password" {

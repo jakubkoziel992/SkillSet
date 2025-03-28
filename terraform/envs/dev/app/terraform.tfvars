@@ -1,3 +1,5 @@
+project_name           = "skillset"
+environment            = "dev"
 db_name                = "skillset"
 engine                 = "mysql"
 engine_version         = "8.0.40"
@@ -47,7 +49,8 @@ DB_ingress_rules = {
 alb_ingress_rules = {
   "http" = {
     description = "Allow HTTP request from anywhere"
-    port       = 80
-    protocol   = "tcp"
+    cidr_ipv4   = "0.0.0.0/0"
+    port        = 80
+    protocol    = "tcp"
   }
 }

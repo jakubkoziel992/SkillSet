@@ -1,18 +1,18 @@
 module "iam" {
-  source = "../../../modules/iam"
+  source      = "../../../modules/iam"
   policy_name = "SecretsManagerGetSecretsValue"
-  iam_policy = data.aws_iam_policy_document.getsecrets.json
-  iam_role = "ecsTaskExecutionRole"
+  iam_policy  = data.aws_iam_policy_document.getsecrets.json
+  iam_role    = "ecsTaskExecutionRole"
 }
 
 module "alb" {
   source                         = "../../../modules/loadbalancer"
-  name                           = "skillset"
+  project_name                   = var.project_name
+  environment                    = var.environment
   lb_type                        = "application"
   target_type                    = "ip"
   vpc_id                         = data.aws_vpc.vpc.id
   public_subnets                 = data.terraform_remote_state.vpc.outputs.public_subnets
-  ec2_instance_ids               = []
   ingress_rules                  = var.ingress_rules
   enable_target_group_attachment = false
   user_ip                        = chomp(data.http.myip.response_body)
@@ -20,6 +20,8 @@ module "alb" {
 
 module "ecs" {
   source                   = "../../../modules/ecs"
+  project_name             = var.project_name
+  environment              = var.environment
   service_subnets          = data.terraform_remote_state.vpc.outputs.private_subnets
   web_task_definition      = var.web_task_definition
   database_task_definition = var.database_task_definition

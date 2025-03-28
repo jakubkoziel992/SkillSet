@@ -1,3 +1,13 @@
+variable "project_name" {
+  description = "The project name"
+  type        = string
+}
+
+variable "environment" {
+  description = "The name of the deployment environment"
+  type        = string
+}
+
 variable "username" {
   type = string
 }
@@ -136,6 +146,7 @@ variable "alb_ingress_rules" {
   description = "ingress rules values"
   type = map(object({
     description = string
+    cidr_ipv4   = optional(string)
     port        = number
     protocol    = string
   }))

@@ -4,7 +4,7 @@ resource "aws_vpc" "skillset_vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "${var.name}-vpc"
+    Name = "${var.project_name}-${var.environment}-vpc"
   }
 }
 
@@ -36,7 +36,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.skillset_vpc.id
 
   tags = {
-    Name = "${var.name}-IGW"
+    Name = "${var.project_name}-${var.environment}-IGW"
   }
 }
 
@@ -54,7 +54,7 @@ resource "aws_route_table" "public_route_table" {
   }
 
   tags = {
-    Name = "${var.name}-pub-RT"
+    Name = "${var.project_name}-${var.environment}-pub-RT"
   }
 }
 
@@ -69,7 +69,7 @@ resource "aws_eip" "nat_elastics_ips" {
   domain   = "vpc"
 
   tags = {
-    Name = "${var.name}-NAT-EIP-${index(keys(var.public_subnets), each.key) + 1}"
+    Name = "${var.project_name}-${var.environment}-NAT-EIP-${index(keys(var.public_subnets), each.key) + 1}"
   }
 }
 
@@ -79,7 +79,7 @@ resource "aws_nat_gateway" "nat_gateways" {
   subnet_id     = aws_subnet.public_subnet[each.key].id
 
   tags = {
-    Name = "${var.name}-NAT-GW-${index(keys(var.public_subnets), each.key) + 1}"
+    Name = "${var.project_name}-${var.environment}-NAT-GW-${index(keys(var.public_subnets), each.key) + 1}"
   }
 }
 
@@ -102,7 +102,7 @@ resource "aws_route_table" "private_route_tables" {
   }
 
   tags = {
-    Name = "${var.name}-priv-RT-${index(keys(var.private_subnets), each.key) + 1}"
+    Name = "${var.project_name}-${var.environment}-priv-RT-${index(keys(var.private_subnets), each.key) + 1}"
   }
 }
 

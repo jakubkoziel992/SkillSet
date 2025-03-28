@@ -1,22 +1,26 @@
 locals {
-  ip_address = chomp(data.http.myip.response_body)
-  vpc_id     = data.aws_vpc.vpc.id
+  ip_address        = chomp(data.http.myip.response_body)
+  vpc_id            = data.aws_vpc.vpc.id
   public_subnet_ids = data.terraform_remote_state.vpc.outputs.public_subnets
 }
 
 
 module "sg" {
   source           = "../../../modules/sg"
+  project_name     = var.project_name
+  environment      = var.environment
   vpc_id           = local.vpc_id
   ingress_rules    = var.ingress_rules
   DB_ingress_rules = var.DB_ingress_rules
   ec2_ip           = local.ip_address
-  elb_sg_id        = module.lb.security_group_id 
+  elb_sg_id        = module.lb.security_group_id
 
 }
 
 module "rds" {
   source               = "../../../modules/rds-mysql"
+  project_name         = var.project_name
+  environment          = var.environment
   username             = local.username
   password             = local.password
   db_name              = var.db_name
@@ -78,13 +82,14 @@ module "ec2-2" {
 
 
 module "lb" {
-  source           = "../../../modules/loadbalancer"
-  vpc_id           = local.vpc_id
-  name             = "skillset"
-  lb_type          = "application"
-  public_subnets   = local.public_subnet_ids
-  ec2_instance_ids = [module.ec2-1.ec2_id, module.ec2-2.ec2_id]
-  user_ip          = local.ip_address
-  ingress_rules    = var.alb_ingress_rules
+  source                         = "../../../modules/loadbalancer"
+  vpc_id                         = local.vpc_id
+  project_name                   = var.project_name
+  environment                    = var.environment
+  lb_type                        = "application"
+  public_subnets                 = local.public_subnet_ids
+  ec2_instance_ids               = [module.ec2-1.ec2_id, module.ec2-2.ec2_id]
+  user_ip                        = local.ip_address
+  ingress_rules                  = var.alb_ingress_rules
   enable_target_group_attachment = true
 }

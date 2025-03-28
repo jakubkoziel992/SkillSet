@@ -1,13 +1,14 @@
 module "iam" {
-  source = "../../../modules/iam"
+  source      = "../../../modules/iam"
   policy_name = "SecretsManagerGetSecretsValue"
-  iam_policy = data.aws_iam_policy_document.getsecrets.json
-  iam_role = "ecsTaskExecutionRole"
+  iam_policy  = data.aws_iam_policy_document.getsecrets.json
+  iam_role    = "ecsTaskExecutionRole"
 }
 
 module "alb" {
   source                         = "../../../modules/loadbalancer"
-  name                           = "skillset"
+  project_name                   = var.project_name
+  environment                    = var.environment
   lb_type                        = "application"
   target_type                    = "ip"
   vpc_id                         = data.aws_vpc.default.id
@@ -20,6 +21,8 @@ module "alb" {
 
 module "ecs" {
   source                   = "../../../modules/ecs"
+  project_name             = var.project_name
+  environment              = var.environment
   service_subnets          = data.aws_subnets.default_subnets.ids
   web_task_definition      = var.web_task_definition
   database_task_definition = var.database_task_definition

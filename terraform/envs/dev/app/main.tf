@@ -6,11 +6,13 @@ locals {
 
 module "sg" {
   source           = "../../../modules/sg"
+  project_name     = var.project_name
+  environment      = var.environment
   vpc_id           = local.vpc_id
   ingress_rules    = var.ingress_rules
   DB_ingress_rules = var.DB_ingress_rules
   ec2_ip           = local.ip_address
-  elb_sg_id        = module.lb.security_group_id 
+  elb_sg_id        = module.lb.security_group_id
 }
 
 
@@ -32,6 +34,8 @@ module "rds" {
   multi_az             = var.multi_az
   private_subnets      = local.subnets_id
   rds_sg               = module.sg.rds_sg
+  project_name         = var.project_name
+  environment          = var.environment
 }
 
 module "ec2" {
@@ -56,13 +60,14 @@ module "ec2" {
 }
 
 module "lb" {
-  source           = "../../../modules/loadbalancer"
-  name             = "skillset"
-  lb_type          = "application"
-  vpc_id           = local.vpc_id
-  public_subnets   = local.subnets_id
-  ec2_instance_ids = [module.ec2.ec2_id]
-  ingress_rules    = var.alb_ingress_rules
-  user_ip          = local.ip_address
+  source                         = "../../../modules/loadbalancer"
+  project_name                   = var.project_name
+  environment                    = var.environment
+  lb_type                        = "application"
+  vpc_id                         = local.vpc_id
+  public_subnets                 = local.subnets_id
+  ec2_instance_ids               = [module.ec2.ec2_id]
+  ingress_rules                  = var.alb_ingress_rules
+  user_ip                        = local.ip_address
   enable_target_group_attachment = true
 }

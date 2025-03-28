@@ -14,7 +14,7 @@ data "http" "myip" {
 }
 
 data "aws_secretsmanager_secret" "secrets" {
-  name = "dev-skillset-secrets"
+  name = "skillset-dev-secrets"
 }
 
 locals {
@@ -29,11 +29,11 @@ locals {
 
 
 data "aws_iam_policy_document" "getsecrets" {
-    version = "2012-10-17"
-    statement {
-      sid = "retrieveSecrets"
-      effect = "Allow"
-      actions = ["secretsmanager:GetSecretValue"]
-      resources = [data.aws_secretsmanager_secret.secrets.arn]
-    }
+  version = "2012-10-17"
+  statement {
+    sid       = "retrieveSecrets"
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [data.aws_secretsmanager_secret.secrets.arn]
+  }
 }

@@ -13,8 +13,11 @@ resource "aws_db_instance" "mysql" {
   multi_az             = var.multi_az
   db_subnet_group_name = aws_db_subnet_group.db-subnet-group.id
 
-
   vpc_security_group_ids = [var.rds_sg]
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-RDS"
+  }
 }
 
 resource "aws_db_subnet_group" "db-subnet-group" {

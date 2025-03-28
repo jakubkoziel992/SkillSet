@@ -1,7 +1,7 @@
 data "aws_vpc" "vpc" {
   filter {
     name   = "tag:Name"
-    values = ["skillset-vpc"]
+    values = ["skillset-prod-vpc"]
   }
 }
 
@@ -17,7 +17,7 @@ data "http" "myip" {
 }
 
 data "aws_secretsmanager_secret" "secrets" {
-  name = "prod-skillset-secrets"
+  name = "skillset-prod-secrets"
 }
 
 
@@ -32,11 +32,11 @@ locals {
 }
 
 data "aws_iam_policy_document" "getsecrets" {
-    version = "2012-10-17"
-    statement {
-      sid = "retrieveSecrets"
-      effect = "Allow"
-      actions = ["secretsmanager:GetSecretValue"]
-      resources = [data.aws_secretsmanager_secret.secrets.arn]
-    }
+  version = "2012-10-17"
+  statement {
+    sid       = "retrieveSecrets"
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [data.aws_secretsmanager_secret.secrets.arn]
+  }
 }

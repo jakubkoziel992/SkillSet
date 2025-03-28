@@ -1,7 +1,8 @@
 module "vpc" {
-  source     = "../../../modules/vpc"
-  name       = "skillset"
-  cidr_block = "172.20.0.0/16"
+  source       = "../../../modules/vpc"
+  project_name = "skillset"
+  environment  = "prod"
+  cidr_block   = "172.20.0.0/16"
   public_subnets = {
     "skillset-pub-subnet-01" = {
       subnet_cidr             = "172.20.1.0/24"

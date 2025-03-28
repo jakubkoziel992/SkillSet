@@ -5,19 +5,29 @@ variable "ec2_ip" {
   type        = string
 }
 
+variable "project_name" {
+  description = "The project name"
+  type        = string
+}
+
+variable "environment" {
+  description = "The name of the deployment environment"
+  type        = string
+}
+
 variable "elb_sg_id" {
   description = "ELB Security Group ID"
-  type        = string 
+  type        = string
 }
 
 variable "ingress_rules" {
   description = "EC2 instance ingress rules"
   type = map(object({
-    description       = string
-    cidr_ipv4         = optional(string)
-    from_port         = number
-    ip_protocol       = string
-    to_port           = number
+    description                  = string
+    cidr_ipv4                    = optional(string)
+    from_port                    = number
+    ip_protocol                  = string
+    to_port                      = number
     referenced_security_group_id = optional(string)
   }))
 }

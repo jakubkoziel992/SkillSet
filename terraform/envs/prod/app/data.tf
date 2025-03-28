@@ -1,7 +1,7 @@
 data "aws_vpc" "vpc" {
   filter {
     name   = "tag:Name"
-    values = ["skillset-vpc"]
+    values = ["skillset-prod-vpc"]
   }
 }
 
@@ -23,7 +23,7 @@ data "terraform_remote_state" "vpc" {
 # }
 
 data "aws_secretsmanager_secret" "secrets" {
-  name = "prod-skillset-secrets"
+  name = "skillset-prod-secrets"
 }
 
 data "aws_secretsmanager_secret_version" "app_secrets" {
