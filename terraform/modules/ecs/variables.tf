@@ -85,14 +85,13 @@ variable "web_task_definition" {
       protocol      = string
       appProtocol   = optional(string)
     }))
-
-    # health_check = optional(object({
-    #   command    = list(string)
-    #   interval   = number
-    #   timeout    = number
-    #   retries    = number
-    #   startPeriod = number
-    # }))
+    health_check = object({
+      command     = list(string)
+      interval    = number
+      timeout     = number
+      retries     = number
+      startPeriod = number
+    })
   })
 }
 

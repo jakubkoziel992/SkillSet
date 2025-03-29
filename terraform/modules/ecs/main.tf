@@ -48,6 +48,7 @@ resource "aws_ecs_task_definition" "web" {
         { name = "DB_USER", valueFrom = var.username },
         { name = "SECRET_KEY", valueFrom = var.app_secret_key }
       ]
+      healthCheck = var.web_task_definition.health_check
     }
   ])
   runtime_platform {
@@ -99,6 +100,8 @@ resource "aws_ecs_service" "service" {
     enable   = true
     rollback = true
   }
+
+  force_new_deployment = true
 
   network_configuration {
     subnets          = var.service_subnets

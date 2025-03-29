@@ -10,17 +10,17 @@ database_task_definition = {
 
 web_task_definition = {
   name         = "web"
-  image        = "320183397498.dkr.ecr.us-east-1.amazonaws.com/kozijakinfo/skillset-app:2.0"
+  image        = "320183397498.dkr.ecr.us-east-1.amazonaws.com/kozijakinfo/skillset-app:1.0"
   cpu          = 512
   memory       = 1024
   port_mapping = [{ name = "web", containerPort = 8000, hostPort = 8000, protocol = "tcp", appProtocol = "http" }]
-  # health_check =  {
-  #   command    = ["CMD-SHELL", "curl http://localhost:8000 || exit 1"]
-  #   interval   = 30
-  #   timeout    = 5
-  #   retries    = 3
-  #   startPeriod = 10
-  # }
+  health_check = {
+    command     = ["CMD-SHELL", "curl http://localhost:8000 || exit 1"]
+    interval    = 15
+    timeout     = 5
+    retries     = 3
+    startPeriod = 10
+  }
 }
 
 
@@ -39,7 +39,7 @@ service_definitions = {
   }
   "web" = {
     service_name  = "web"
-    desired_count = 1
+    desired_count = 2
     load_balancer = {
       container_name = "web"
       container_port = 8000
