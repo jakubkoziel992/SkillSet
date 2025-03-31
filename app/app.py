@@ -1,4 +1,5 @@
 from flask import Flask
+from sqlalchemy.exc import ProgrammingError
 from database import db
 from config import DevelopmentConfig, ProductionConfig
 from routes import blueprint
@@ -27,7 +28,11 @@ def create_app(config_name=None):
     app.register_blueprint(blueprint)
 
     with app.app_context():
-        db.create_all()
+        try:
+            db.create_all()
+        except ProgrammingError:
+            print("Table exists")
+
 
     return app
 
