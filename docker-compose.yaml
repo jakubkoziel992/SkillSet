@@ -12,8 +12,8 @@ services:
     depends_on:
       - web
   web:
-    #build: ./app 
-    image: 320183397498.dkr.ecr.us-east-1.amazonaws.com/kozijakinfo/skillset-app:1.0
+    build: ./app 
+    #image: 320183397498.dkr.ecr.us-east-1.amazonaws.com/kozijakinfo/skillset-app:1.0
     container_name: web
     restart: always
     environment:
