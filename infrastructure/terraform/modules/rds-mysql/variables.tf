@@ -6,10 +6,12 @@ variable "rds_sg" {
 }
 
 variable "username" {
+  description = "The databse username"
   type = string
 }
 
 variable "password" {
+  description = "The database password"
   type      = string
   sensitive = true
 }
