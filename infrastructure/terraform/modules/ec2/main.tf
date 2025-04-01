@@ -13,7 +13,7 @@ resource "aws_instance" "flask-app" {
   key_name = aws_key_pair.flask.key_name
 
   user_data = templatefile(
-    "../../../../scripts/init_app.sh",
+    "${path.module}/../../scripts/init_app.sh",
     {
       app_env     = var.flask_app,
       db_user     = var.username,
