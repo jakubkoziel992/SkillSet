@@ -6,21 +6,23 @@ variable "ec2_sg" {
 }
 
 variable "username" {
+  description = "The databse username"
   type = string
 }
 
 variable "password" {
+  description = "The database password"
   type      = string
   sensitive = true
 }
 
 variable "db_name" {
-  description = "DB name from RDS module"
+  description = "The database name from RDS module"
   type        = string
 }
 
 variable "db_host" {
-  description = "DB host from RDS module"
+  description = "The database host from RDS module"
   type        = string
 }
 
