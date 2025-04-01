@@ -30,7 +30,7 @@ cd /home/ubuntu
 
 log "Installing the required applications...."
 sudo apt update -y
-sudo apt update -y && sudo apt install -y  python3 python3-pip
+sudo apt install -y  python3 python3-pip
 
 [[ $? -eq 0 ]] && log "Succesfully installed python"
 
@@ -48,7 +48,8 @@ log "Starting application"
 gunicorn  | log
 
 if pgrep -x "gunicorn" > /dev/null 2>&1; then
-    log "Application is working" 
+    log "Application is working"
+    log "Init script finished succesfully."
     exit 0
 else
     log "Application not working." 
@@ -56,4 +57,3 @@ else
     gunicorn  | log
 fi
 
-log "Init script finished succesfully."
