@@ -48,11 +48,11 @@ log "Starting application"
 gunicorn  | log
 
 if pgrep -x "gunicorn" > /dev/null 2>&1; then
-    log "Application is working"
+    log "Application is working" 
     exit 0
 else
-    log "Application not working."
-    log "Restarting application."
+    log "Application not working." 
+    log "Restarting application." 
     gunicorn  | log
 fi
 
