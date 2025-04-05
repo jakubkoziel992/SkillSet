@@ -22,7 +22,7 @@ function log {
 }
 
 if [[ ! -f $LOG_FILE ]]; then
-    log "Creating log_file"
+    log "Creating log_file."
     sudo mkdir -m 600 $LOG_FILE | log
 fi
 
@@ -32,14 +32,14 @@ log "Installing the required applications...."
 sudo apt update -y
 sudo apt install -y  python3 python3-pip
 
-[[ $? -eq 0 ]] && log "Succesfully installed python"
+[[ $? -eq 0 ]] && log "Succesfully installed python."
 
 #clone repository
 git clone https://github.com/jakubkoziel992/SkillSet.git | log
 
 #install requirements
 cd ./SkillSet/app
-pip install -r ./requirements.txt && log "Installed python requirements"
+pip install -r ./requirements.txt && log "Installed python requirements."
 
 
 #start application
@@ -48,7 +48,7 @@ log "Starting application"
 gunicorn  | log
 
 if pgrep -x "gunicorn" > /dev/null 2>&1; then
-    log "Application is working"
+    log "Application is working."
     log "Init script finished succesfully."
     exit 0
 else
