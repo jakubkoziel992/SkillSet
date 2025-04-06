@@ -1,0 +1,8 @@
+test:
+  stage: test
+  image: python:3.12
+
+  script:
+  - pip install -r ./app/requirements.txt
+  - pip install pytest
+  - pytest -v .
