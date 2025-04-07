@@ -1,7 +1,7 @@
 stages:
   - test
 
-run_test:
+unit_test:
   stage: test
   image: python:3.12
 
@@ -13,3 +13,4 @@ run_test:
 # run only for merge requests
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"
