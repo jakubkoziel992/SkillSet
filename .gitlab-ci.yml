@@ -1,8 +1,15 @@
-test:
+stages:
+  - test
+
+run_test:
   stage: test
   image: python:3.12
 
   script:
   - pip install -r ./app/requirements.txt
   - pip install pytest
-  - pytest -v .
+  - pytest -v
+
+# run only for merge requests
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
