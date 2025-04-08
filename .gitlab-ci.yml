@@ -1,12 +1,35 @@
 stages:
   - test
 
+variables:
+  PIP_CACHE_DIR: ".cache/pip/"
+
 unit_test:
   stage: test
   image: python:3.12
+  cache:
+    key: mycache
+    paths: 
+      - .cache/pip/
   script:
   - pip cache dir
   - pip install -r ./app/requirements.txt
+  - pip install pytest
+  - pytest -v
+
+# run only for merge requests
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "master"
+
+unit_test_2:
+  stage: test
+  image: python:3.12
+  cache:
+    key: mycache
+    paths: 
+      - .cache/pip/
+  script:
   - pip install -r ./app/requirements.txt
   - pip install pytest
   - pytest -v
