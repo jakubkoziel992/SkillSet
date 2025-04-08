@@ -8,8 +8,7 @@ unit_test:
   stage: test
   image: python:3.12
   cache:
-    key: mycache
-    paths: 
+    key: mycache 
       - .cache/pip/
   script:
   - pip cache dir
