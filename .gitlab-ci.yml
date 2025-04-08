@@ -9,8 +9,10 @@ unit_test:
   image: python:3.12
   cache:
     key: mycache 
+    paths:  
       - .cache/pip/
   script:
+  - echo "Cache dir: $PIP_CACHE_DIR"
   - pip cache dir
   - pip install -r ./app/requirements.txt
   - pip install pytest
