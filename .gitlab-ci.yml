@@ -15,7 +15,6 @@ unit_test:
     - python -m venv .venv # Create virtual environment inside the .venv directory
     - source .venv/bin/activate  # Activate the environment
   script:
-    - pip cache dir
     - pip install -r ./app/requirements.txt
     - pip install pytest
     - pytest -v
