@@ -4,8 +4,9 @@ stages:
 unit_test:
   stage: test
   image: python:3.12
-
   script:
+  - pip cache dir
+  - pip install -r ./app/requirements.txt
   - pip install -r ./app/requirements.txt
   - pip install pytest
   - pytest -v
