@@ -5,17 +5,17 @@ unit_test:
   stage: test
   image: python:alpine3.20
   cache:
-    key: mycache 
+    key: mycache
     paths:  
       - .venv/lib
   before_script:
     - python -m venv .venv # Create virtual environment inside the .venv directory
     - source .venv/bin/activate # Activate the environment
-
   script:
-    - pip install -r ./app/requirements.txt
-    - pip install pytest
-    - pytest -v
+    - python -m pip install --upgrade pip
+    - python -m pip install -r ./app/requirements.txt
+    - python -m pip install pytest
+    - python -m pytest -v
 
 
 # run only for merge requests
