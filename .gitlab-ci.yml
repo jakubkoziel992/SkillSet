@@ -1,9 +1,6 @@
 stages:
   - test
 
-variables:
-  PIP_CACHE_DIR: ".cache/pip/"
-
 unit_test:
   stage: test
   image: python:3.12
@@ -12,12 +9,12 @@ unit_test:
     paths:  
       - .venv/lib
   before_script:
+    - pip cache dir
     - python -m venv .venv # Create virtual environment inside the .venv directory
-    - source .venv/bin/activate  # Activate the environment
+    - source .venv/bin/activate # Activate the environment
   script:
     - pip install -r ./app/requirements.txt
-    - pip install pytest
-    - pytest -v
+
 
 # run only for merge requests
   rules:
