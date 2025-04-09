@@ -12,8 +12,11 @@ unit_test:
     - pip cache dir
     - python -m venv .venv # Create virtual environment inside the .venv directory
     - source .venv/bin/activate # Activate the environment
+    - deactivate
+    - source .venv/bin/activate
   script:
     - pip install -r ./app/requirements.txt
+    - pytest -v
 
 
 # run only for merge requests
