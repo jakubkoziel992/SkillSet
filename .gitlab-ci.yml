@@ -3,19 +3,18 @@ stages:
 
 unit_test:
   stage: test
-  image: python:3.12
+  image: python:alpine3.20
   cache:
     key: mycache 
     paths:  
       - .venv/lib
   before_script:
-    - pip cache dir
     - python -m venv .venv # Create virtual environment inside the .venv directory
     - source .venv/bin/activate # Activate the environment
-    - deactivate
-    - source .venv/bin/activate
+
   script:
     - pip install -r ./app/requirements.txt
+    - pip install pytest
     - pytest -v
 
 
