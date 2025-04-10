@@ -1,5 +1,6 @@
 stages:
   - test
+  - lint
 
 unit_test:
   stage: test
@@ -22,3 +23,15 @@ unit_test:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "master"
+
+lint_pr:
+  image: node:18
+  stage: lint
+  script:
+    - npm install --no-save @commitlint/config-conventional @commitlint/cli
+    - git fetch origin master
+    - npx commitlint --from=origin/master --to=HEAD
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+
