@@ -1,6 +1,5 @@
 stages:
   - test
-  - lint
 
 unit_test:
   stage: test
@@ -26,7 +25,7 @@ unit_test:
 
 lint_pr:
   image: node:18
-  stage: lint
+  stage: test
   script:
     - npm install --no-save @commitlint/config-conventional @commitlint/cli
     - git fetch origin master
