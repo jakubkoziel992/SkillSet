@@ -12,6 +12,8 @@ unit_test:
     - python -m venv .venv # Create virtual environment inside the .venv directory
     - source .venv/bin/activate # Activate the environment
   script:
+    - echo $CI_PIPELINE_SOURCE
+    - echo $CI_COMMIT_BRANCH
     - python -m pip install --upgrade pip
     - python -m pip install -r ./app/requirements.txt
     - python -m pip install pytest
