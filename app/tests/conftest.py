@@ -1,5 +1,6 @@
 import sys
 import os
+from unittest.mock import patch
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
 import pytest
@@ -18,7 +19,12 @@ def client(app):
     return app.test_client()
 
 @pytest.fixture(scope='module')
-def init_db():
+def init_db(app):
     db.create_all()
     yield db
     db.drop_all()
+    
+@pytest.fixture
+def mock_db_session():
+    with patch('services.db.session') as mock_session:
+        yield mock_session
