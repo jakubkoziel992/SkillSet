@@ -1,8 +1,8 @@
 stages:
-  - test
+  - unit_test
+  - integration_test
 
-unit_test:
-  stage: test
+.test:
   image: python:alpine3.20
   cache:
     key: mycache
@@ -20,14 +20,29 @@ unit_test:
     - python -m pytest -v
 
 
-# run only for merge requests
+
+unit_test:
+  stage: unit_test
+  extends: .test
+  script:
+    - python -m pytest app/tests/unit_test.py -v
+
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
+integration_test:
+  stage: integration_test
+  extends: .test
+  script:
+    - python -m pytest app/tests/integration_test.py -v
+
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
 lint_pr:
   image: node:18
-  stage: test
+  stage: unit_test
   script:
     - npm install --no-save @commitlint/config-conventional @commitlint/cli
     - git fetch origin master
