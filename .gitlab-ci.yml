@@ -15,20 +15,22 @@ stages:
     - python -m pip install -r ./app/requirements.txt
     - python -m pip install pytest
 
-unit_test:
+unit test:
   stage: unit_test
   extends: .test
   script:
     - python -m pytest app/tests/unit_test.py -v
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-integration_test:
+unit and integration_test:
   stage: integration_test
   extends: .test
   script:
     - python -m pytest --cov=app --cov-report=xml:app/reports/coverage.xml --cov-report=html:app/reports/htmlcov app/tests/ -v
+  artifacts:
+    paths:
+      - ./app/reports
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
