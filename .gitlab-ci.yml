@@ -11,22 +11,15 @@ stages:
   before_script:
     - python -m venv .venv # Create virtual environment inside the .venv directory
     - source .venv/bin/activate # Activate the environment
-  script:
-    - echo $CI_PIPELINE_SOURCE
-    - echo $CI_COMMIT_BRANCH
     - python -m pip install --upgrade pip
     - python -m pip install -r ./app/requirements.txt
     - python -m pip install pytest
-    - python -m pytest -v
-
-
 
 unit_test:
   stage: unit_test
   extends: .test
   script:
     - python -m pytest app/tests/unit_test.py -v
-
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -35,8 +28,7 @@ integration_test:
   stage: integration_test
   extends: .test
   script:
-    - python -m pytest app/tests/integration_test.py -v
-
+    - python -m pytest --cov=app --cov-report=xml:app/reports/coverage.xml --cov-report=html:app/reports/htmlcov app/tests/ -v
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
@@ -49,5 +41,3 @@ lint_pr:
     - npx commitlint --from=origin/master --to=HEAD
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-
-
