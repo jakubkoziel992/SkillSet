@@ -45,14 +45,13 @@ lint_pr:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-
 build:
   stage: build and push
   image: docker:28
   services:
     - docker:28-dind
   script:
-    - docker build -t $CI_REGISTRY/$CI_PROJECT_DIR:$CI_COMMIT_SHORT_SHA -f ./app/Dockerfile ./app
+    - docker build -t $CI_REGISTRY/$CI_PROJECT_TITLE:$CI_COMMIT_SHORT_SHA -f ./app/Dockerfile ./app
     - docker image ls
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
