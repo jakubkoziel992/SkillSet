@@ -1,7 +1,7 @@
 stages:
   - unit_test
   - integration_test
-  - docker_build_test_publish
+  - docker_build_publish
 
 variables:
   IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
@@ -48,17 +48,21 @@ lint_pr:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-build:
-  stage: docker_build_test_publish
+build_and_publish:
+  stage: docker_build_publish
   image: docker:28
   services:
     - docker:28-dind
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-  script:
-    - docker build -t $IMAGE_TAG -f ./app/Dockerfile ./app
-    - docker run $IMAGE_TAG python -m  pytest tests -v
-    - docker image push $IMAGE_TAG
+    - docker buildx create --use
+    - export DOCKER_BUILDKIT=1
+  script: 
+    - >
+      docker buildx build -t $IMAGE_TAG -f ./app/Dockerfile 
+      --cache-from=type=registry,ref=$CI_REGISTRY_IMAGE:buildcache 
+      --cache-to=type=registry,ref=$CI_REGISTRY_IMAGE:buildcache,mode=max 
+      --push ./app
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   
