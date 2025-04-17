@@ -1,7 +1,10 @@
 stages:
   - unit_test
   - integration_test
-  - build and push
+  - docker_build_test_publish
+
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
 
 .test:
   image: python:alpine3.20
@@ -16,7 +19,7 @@ stages:
     - python -m pip install -r ./app/requirements.txt
     - python -m pip install pytest
 
-unit test:
+unit_test:
   stage: unit_test
   extends: .test
   script:
@@ -36,8 +39,8 @@ unit and integration_test:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 lint_pr:
-  image: node:18
   stage: unit_test
+  image: node:18
   script:
     - npm install --no-save @commitlint/config-conventional @commitlint/cli
     - git fetch origin master
@@ -46,13 +49,16 @@ lint_pr:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 build:
-  stage: build and push
+  stage: docker_build_test_publish
   image: docker:28
   services:
     - docker:28-dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
   script:
-    - docker build -t $CI_REGISTRY/$CI_PROJECT_TITLE:$CI_COMMIT_SHORT_SHA -f ./app/Dockerfile ./app
-    - docker image ls
+    - docker build -t $IMAGE_TAG -f ./app/Dockerfile ./app
+    - docker run $IMAGE_TAG python -m  pytest tests -v
+    - docker image push $IMAGE_TAG
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   
