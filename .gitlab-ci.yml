@@ -1,6 +1,6 @@
 stages:
   - unit_test
-  - integration_test
+  - post_merge_tests
   - docker_build_publish
 
 variables:
@@ -27,17 +27,24 @@ unit_test:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-unit and integration_test:
-  stage: integration_test
+post_merge_tests:
+  stage: post_merge_tests
   extends: .test
   script:
     - python -m pytest --cov=app --cov-report=xml:app/reports/coverage.xml --cov-report=html:app/reports/htmlcov app/tests/ -v
   artifacts:
     paths:
       - ./app/reports
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: app/reports/coverage.xml
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
+      changes:
+        paths:
+          - "app/**"
+          - ".gitlab-ci.yml"
 lint_pr:
   stage: unit_test
   image: node:18
@@ -65,4 +72,8 @@ build_and_publish:
       --push ./app
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - "app/**"
+          - ".gitlab-ci.yml"
   
