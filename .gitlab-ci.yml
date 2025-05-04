@@ -58,9 +58,7 @@ semantic_release:
   stage: semantic_release
   image: node:20
   script:
-    - npm install @semantic-release/commit-analyzer @semantic-release/gitlab
-    - npm ls @semantic-release/npm @semantic-release/github
-    - npm uninstall @semantic-release/npm @semantic-release/github
+    - npm install -g semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/git @semantic-release/changelog
     - npx semantic-release > semantic-release.log
     - cat semantic-release.log
     #- VERSION=$(grep -oP "Published release \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log)
