@@ -1,33 +1,23 @@
-{
-    "branches": ["master"],
-    "release": {
-      "tagFormat": "v${version}",
-      "ci": true,
-      "debug": false,
-      "plugins": [
+  {
+    "plugins": [
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
         [
-          "@semantic-release/commit-analyzer",
-          {
-            "preset": "conventionalcommits",
-            "releaseRules": [
-              { "type": "revert", "release": "patch" },
-              { "type": "docs", "release": "patch" },
-              { "type": "style", "release": "patch" },
-              { "type": "chore", "release": "patch" },
-              { "type": "refactor", "release": "patch" },
-              { "type": "test", "release": "patch" },
-              { "type": "build", "release": "patch" },
-              { "type": "ci", "release": "patch" },
-              { "type": "improvement", "release": "minor" }
-            ],
-            "parserOpts": {
-              "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+            "@semantic-release/changelog",
+            {
+                "changelogFile": "CHANGELOG.md"
             }
-          }
         ],
-        "@semantic-release/gitlab",
-        "@semantic-release/git"
-        
-      ]
-    }
-  }
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    "CHANGELOG.md"
+                ],
+                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+            }
+        ],
+        "@semantic-release/gitlab"
+    ]
+}
+
