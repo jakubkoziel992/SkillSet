@@ -3,9 +3,6 @@ stages:
   - post_merge_tests
   - docker_build_publish
 
-variables:
-  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-
 .test:
   image: python:alpine3.20
   cache:
@@ -66,7 +63,7 @@ build_and_publish:
     - export DOCKER_BUILDKIT=1
   script: 
     - >
-      docker buildx build -t $IMAGE_TAG -f ./app/Dockerfile 
+      docker buildx build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest -f ./app/Dockerfile 
       --cache-from=type=registry,ref=$CI_REGISTRY_IMAGE:buildcache 
       --cache-to=type=registry,ref=$CI_REGISTRY_IMAGE:buildcache,mode=max 
       --push ./app
