@@ -58,14 +58,16 @@ semantic_release:
   stage: semantic_release
   image: node:20
   script:
-    - npm install
+    - npm install @semantic-release/commit-analyzer @semantic-release/gitlab
+    - npm ls @semantic-release/npm @semantic-release/github
+    - npm uninstall @semantic-release/npm @semantic-release/github
     - npx semantic-release > semantic-release.log
     - cat semantic-release.log
     #- VERSION=$(grep -oP "Published release \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log)
     #- echo $VERSION > release_version.txt
   rules:
-   #- if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
       changes:
         paths:
           - "app/**"
