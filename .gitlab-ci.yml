@@ -59,7 +59,7 @@ semantic_release:
   image: node:20
   script:
     - npm install
-    - npx semantic-release --dry-run --debug > semantic-release.log
+    - npx semantic-release > semantic-release.log
     - cat semantic-release.log
     #- VERSION=$(grep -oP "Published release \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log)
     #- echo $VERSION > release_version.txt
