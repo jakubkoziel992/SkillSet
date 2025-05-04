@@ -1,3 +1,10 @@
+# [1.1.0](https://gitlab.com/jakubkoziel992/SkillSet/compare/v1.0.0...v1.1.0) (2025-05-04)
+
+
+### Features
+
+* **ci-cd:** store version in variable ([#41](https://gitlab.com/jakubkoziel992/SkillSet/issues/41)) ([d2761b2](https://gitlab.com/jakubkoziel992/SkillSet/commit/d2761b28c101e8fc729de92a7b260781efec6a5d))
+
 # 1.0.0 (2025-05-04)
 
 
