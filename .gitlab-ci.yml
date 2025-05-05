@@ -91,6 +91,8 @@ build_and_publish:
     - docker buildx create --use
     - export DOCKER_BUILDKIT=1
   script: 
+    - export VERSION=$(cat release_version.txt)
+    - echo $VERSION
     - >
       docker buildx build -t $CI_REGISTRY_IMAGE:$VERSION -t $CI_REGISTRY_IMAGE:latest -f ./app/Dockerfile 
       --cache-from=type=registry,ref=$CI_REGISTRY_IMAGE:buildcache 
