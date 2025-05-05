@@ -3,7 +3,6 @@ stages:
   - post_merge_tests
   - semantic_release
   - docker_build_publish
-  - release
 
 .test:
   image: python:alpine3.20
