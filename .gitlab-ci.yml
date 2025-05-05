@@ -59,13 +59,14 @@ semantic_release:
   image: node:20
   script:
     - npm install -g semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator
-    - npx semantic-release > semantic-release.log
+    - npx semantic-release --dry-run --debug > semantic-release.log
     - VERSION=$(grep -oP "Published release \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log)
     - echo $VERSION > release_version.txt
   artifacts:
     name: "app version"
     paths:
       - release_version.txt
+      - semantic-release.log
     expire_in: 5 mins
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
