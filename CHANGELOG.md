@@ -1,3 +1,10 @@
+# [1.2.0](https://gitlab.com/jakubkoziel992/SkillSet/compare/v1.1.0...v1.2.0) (2025-05-05)
+
+
+### Features
+
+* **ci-cd:** use semantic docker tag ([#42](https://gitlab.com/jakubkoziel992/SkillSet/issues/42)) ([058b2b6](https://gitlab.com/jakubkoziel992/SkillSet/commit/058b2b6cf1791edb5624fb5246f18280e4f80e90))
+
 # [1.1.0](https://gitlab.com/jakubkoziel992/SkillSet/compare/v1.0.0...v1.1.0) (2025-05-04)
 
 
