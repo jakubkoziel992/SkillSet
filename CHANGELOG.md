@@ -1,3 +1,10 @@
+# [1.3.0](https://gitlab.com/jakubkoziel992/SkillSet/compare/v1.2.1...v1.3.0) (2025-05-05)
+
+
+### Features
+
+* **ci-cd:** use local cache for docker build ([#43](https://gitlab.com/jakubkoziel992/SkillSet/issues/43)) ([c09a54b](https://gitlab.com/jakubkoziel992/SkillSet/commit/c09a54b4cc618a758c9d102754132abd0acb0a43))
+
 ## [1.2.1](https://gitlab.com/jakubkoziel992/SkillSet/compare/v1.2.0...v1.2.1) (2025-05-05)
 
 
