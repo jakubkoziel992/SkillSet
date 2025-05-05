@@ -61,8 +61,7 @@ semantic_release:
     - npm install -g semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/git @semantic-release/changelog
     - npx semantic-release > semantic-release.log
     - VERSION=$(grep -oP "Published release \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log)
-    - echo $VERSION > release_version.txt
-    - cat release_version.txt
+    - echo $VERSION > release_version.txtt
   artifacts:
     name: "app version"
     paths:
@@ -84,19 +83,16 @@ build_and_publish:
     - docker:28-dind
   dependencies:
     - semantic_release
-  variables:
-    VERSION: $(cat release_version.txt)
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker buildx create --use
     - export DOCKER_BUILDKIT=1
-  script: 
     - export VERSION=$(cat release_version.txt)
-    - echo $VERSION
+  script: 
     - >
       docker buildx build -t $CI_REGISTRY_IMAGE:$VERSION -t $CI_REGISTRY_IMAGE:latest -f ./app/Dockerfile 
-      --cache-from=type=registry,ref=$CI_REGISTRY_IMAGE:buildcache 
-      --cache-to=type=registry,ref=$CI_REGISTRY_IMAGE:buildcache,mode=max 
+      --cache-to type=local,dest=cache_image,mode=max
+      --cache-from type=local,src=cache_image
       --push ./app
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
