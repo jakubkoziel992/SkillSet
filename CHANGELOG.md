@@ -1,3 +1,10 @@
+## [1.2.1](https://gitlab.com/jakubkoziel992/SkillSet/compare/v1.2.0...v1.2.1) (2025-05-05)
+
+
+### Bug Fixes
+
+* **ci-cd:** fix building of docker image ([#42](https://gitlab.com/jakubkoziel992/SkillSet/issues/42)) ([c05263d](https://gitlab.com/jakubkoziel992/SkillSet/commit/c05263d45b34715fbb2e2c203d34aae3d027cf68))
+
 # [1.2.0](https://gitlab.com/jakubkoziel992/SkillSet/compare/v1.1.0...v1.2.0) (2025-05-05)
 
 
