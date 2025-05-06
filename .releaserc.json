@@ -2,7 +2,5 @@
   "branches":["master"],
   "plugins": [
     "@semantic-release/commit-analyzer"
-  ],
-  "preset":"python",
-  "initialVersion":"1.0.0"
+  ]
 }
