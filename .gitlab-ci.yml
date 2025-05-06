@@ -61,12 +61,10 @@ semantic_release:
     - npm install -g semantic-release @semantic-release/commit-analyzer
     - npx semantic-release --dry-run --debug > semantic-release.log
     - VERSION=$(grep -oP "The next release version is \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log)
-    - echo $VERSION > release_version.txt
+    - echo "IMAGE_TAG=$VERSION" >> tag.env
   artifacts:
-    name: "app version"
-    paths:
-      - release_version.txt
-      - semantic-release.log
+    reports:
+      dotenv: tag.env
     expire_in: 5 mins
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
@@ -88,10 +86,11 @@ build_and_publish:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker buildx create --use
     - export DOCKER_BUILDKIT=1
-    - export VERSION=$(cat release_version.txt)
+    - echo $IMAGE_TAG
   script: 
+    - echo $IMAGE_TAG
     - >
-      docker buildx build -t $CI_REGISTRY_IMAGE:$VERSION -t $CI_REGISTRY_IMAGE:latest -f ./app/Dockerfile 
+      docker buildx build -t $CI_REGISTRY_IMAGE:$IMAGE_TAG -t $CI_REGISTRY_IMAGE:latest -f ./app/Dockerfile 
       --cache-to type=local,dest=cache_image,mode=max
       --cache-from type=local,src=cache_image
       --push ./app
