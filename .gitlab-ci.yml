@@ -3,7 +3,6 @@ stages:
   - post_merge_tests
   - semantic_versioning
   - docker_build_publish
-  - release
 
 .test:
   image: python:alpine3.20
@@ -101,20 +100,4 @@ build_and_publish:
         paths:
           - "app/**"
           - ".gitlab-ci.yml"
-
-# release:
-#   stage: release
-#   image: registry.gitlab.com/gitlab-org/release-cli:latest
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-#       needs: ['build_and_publish', 'semantic_versioning']
-#   script:
-#   - echo "Release job"
-#   release:
-#     tag_name: $IMAGE_TAG
-#     description: "Release - $IMAGE_TAG"
-#     assets:
-#       links:
-#         - name: "GitLab Registry Container URL"
-#           url: "https://$CI_REGISTRY_IMAGE:$IMAGE_TAG"
 
