@@ -111,6 +111,6 @@ release:
   script:
   - echo "Release job"
   release:
-    tag_name: $IMAGE_TAG"
+    tag_name: $IMAGE_TAG
     description: "Release - $IMAGE_TAG"
 
