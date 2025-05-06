@@ -113,4 +113,8 @@ release:
   release:
     tag_name: $IMAGE_TAG
     description: "Release - $IMAGE_TAG"
+    assets:
+      links:
+        - name: "GitLab Registry Container URL"
+          url: "https://$CI_REGISTRY_IMAGE:$IMAGE_TAG"
 
