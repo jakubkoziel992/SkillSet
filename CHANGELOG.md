@@ -1,3 +1,10 @@
+## [1.0.1](https://gitlab.com/jakubkoziel992/SkillSet/compare/v1.0.0...v1.0.1) (2025-05-06)
+
+
+### Bug Fixes
+
+* **ci-cd:** add changelog ([b01188d](https://gitlab.com/jakubkoziel992/SkillSet/commit/b01188d7f497485aa6c74bfce102fec13dc4ce21))
+
 # [1.3.0](https://gitlab.com/jakubkoziel992/SkillSet/compare/v1.2.1...v1.3.0) (2025-05-05)
 
 
