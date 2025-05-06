@@ -1,8 +1,9 @@
 stages:
   - unit_test
   - post_merge_tests
-  - semantic_release
+  - semantic_versioning
   - docker_build_publish
+  - release
 
 .test:
   image: python:alpine3.20
@@ -54,8 +55,8 @@ post_merge_tests:
           - "app/**"
           - ".gitlab-ci.yml"
 
-semantic_release:
-  stage: semantic_release
+semantic_versioning:
+  stage: semantic_versioning
   image: node:20
   script:
     - npm install -g semantic-release @semantic-release/commit-analyzer
@@ -82,7 +83,7 @@ build_and_publish:
   services:
     - docker:28-dind
   dependencies:
-    - semantic_release
+    - semantic_versioning
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker buildx create --use
@@ -100,4 +101,16 @@ build_and_publish:
         paths:
           - "app/**"
           - ".gitlab-ci.yml"
-  
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      needs: ['build_and_publish', 'semantic_versioning']
+  script:
+  - echo "Release job"
+  release:
+    tag_name: $IMAGE_TAG"
+    description: "Release - $IMAGE_TAG"
+
