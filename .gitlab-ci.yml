@@ -5,6 +5,7 @@ stages:
   - scan
   - semantic_versioning
   - push
+  - build-release-docker-image
 
 .test:
   image: python:alpine3.20
@@ -149,3 +150,10 @@ push:
         paths:
           - "app/**"
           - ".gitlab-ci.yml"
+build-release-docker-image:
+  stage: build-release-docker-image
+  image: ubuntu:latest
+  script:
+  - echo "image build successed from $CI_COMMIT_TAG"
+  only:
+  - tags
