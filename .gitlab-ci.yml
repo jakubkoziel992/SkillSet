@@ -110,13 +110,7 @@ semantic_versioning:
   image: node:20
   script:
     - npm install -g semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/git @semantic-release/changelog
-    - npx semantic-release > semantic-release.log
-    - VERSION=$(grep -ioP "The next release version is \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log)
-    - echo "IMAGE_TAG=$VERSION" >> tag.env
-  artifacts:
-    reports:
-      dotenv: tag.env
-    expire_in: 10 mins
+    - npx semantic-release
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -133,16 +127,16 @@ push:
     - docker:24.0.5-dind
   dependencies:
     - docker_build
-    - semantic_versioning
   before_script:
   - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+  - echo "image tag - $CI_COMMIT_TAG"
   script:
     - docker load -i skillset_image.tar
-    - docker tag  skillset:latest $CI_REGISTRY_IMAGE:latest
-    - docker tag  skillset:latest $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker tag skillset:latest $CI_REGISTRY_IMAGE:latest
+    - docker tag skillset:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
     - docker image ls 
     - docker push $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
 
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
@@ -150,10 +144,3 @@ push:
         paths:
           - "app/**"
           - ".gitlab-ci.yml"
-build-release-docker-image:
-  stage: build-release-docker-image
-  image: ubuntu:latest
-  script:
-  - echo "image build successed from $CI_COMMIT_TAG"
-  only:
-  - tags
