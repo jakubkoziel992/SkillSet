@@ -128,8 +128,8 @@ push:
   dependencies:
     - docker_build
   before_script:
-  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-  - echo "image tag - $CI_COMMIT_TAG"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - echo "image tag - $CI_COMMIT_TAG"
   script:
     - docker load -i skillset_image.tar
     - docker tag skillset:latest $CI_REGISTRY_IMAGE:latest
@@ -137,10 +137,5 @@ push:
     - docker image ls 
     - docker push $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
-
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        paths:
-          - "app/**"
-          - ".gitlab-ci.yml"
+  only:
+  - tags
