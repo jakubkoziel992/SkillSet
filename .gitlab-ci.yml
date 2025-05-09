@@ -3,9 +3,9 @@ stages:
   - post_merge_tests
   - build
   - scan
-  - semantic_versioning
+  - semantic_release
   - push
-  - build-release-docker-image
+  - edit_release
 
 .test:
   image: python:alpine3.20
@@ -105,8 +105,8 @@ trivy_scan:
           - "app/**"
           - ".gitlab-ci.yml"
 
-semantic_versioning:
-  stage: semantic_versioning
+release:
+  stage: semantic_release
   image: node:20
   script:
     - npm install -g semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/git @semantic-release/changelog
@@ -133,7 +133,7 @@ push:
     - docker:24.0.5-dind
   dependencies:
     - docker_build
-    - semantic_versioning
+    - release
   before_script:
   - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
   script:
@@ -150,3 +150,15 @@ push:
         paths:
           - "app/**"
           - ".gitlab-ci.yml"
+
+edit_release:
+  stage: edit_release
+  image: ubuntu:latest
+  needs:
+    - ["push"]
+  script:
+  - echo "edit release $CI_COMMIT_TAG"
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: on_success
+    - when: never
