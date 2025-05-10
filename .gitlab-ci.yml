@@ -5,7 +5,7 @@ stages:
   - scan
   - semantic_release
   - push
-  - edit_release
+  - release_update
 
 .test:
   image: python:alpine3.20
@@ -151,16 +151,16 @@ push:
           - "app/**"
           - ".gitlab-ci.yml"
 
-edit_release:
-  stage: edit_release
-  image: ubuntu:latest
-  dependencies:
-    - release
-  script:
-  - echo "edit release v${IMAGE_TAG}"
+release_update:
+  stage: release_update
+  image: curlimages/curl:latest
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        paths:
-          - "app/**"
-          - ".gitlab-ci.yml"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
+    - >
+      curl --request PUT --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" 
+      --header "Content-Type: application/json"
+      --data '{"description":"Gitlab Container Registry: docker pull registry.gitlab.com/jakubkoziel992/skillset:1.5.0"}'
+      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v1.5.0"
+    - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
