@@ -153,14 +153,21 @@ push:
 
 release_update:
   stage: release_update
-  image: curlimages/curl:latest
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  image: debian:bullseye-slim
+  dependencies:
+    - release
+  before_script:
+   - apt-get update && apt-get install -y curl jq
+   - echo $IMAGE_TAG
   script:
-    - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
+    - DESCRIPTION=$(curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG" |  jq -r '.description')
+    - NEW_DESCRIPTION="$DESCRIPTION  Docker pull command:registry.gitlab.com/jakubkoziel992/skillset:$IMAGE_TAG"
+    - echo $NEW_DESCRIPTION
     - >
       curl --request PUT --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" 
       --header "Content-Type: application/json"
-      --data '{"description":"Gitlab Container Registry: docker pull registry.gitlab.com/jakubkoziel992/skillset:1.5.0"}'
-      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v1.5.0"
-    - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases"
+      --data "$(jq -nc --arg desc "$NEW_DESCRIPTION" '{ description: $desc }')"
+      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG"
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
