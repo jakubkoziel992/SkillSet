@@ -160,13 +160,13 @@ release_update:
    - apt-get update && apt-get install -y curl jq
    - echo $IMAGE_TAG
   script:
-    - DESCRIPTION=$(curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG" |  jq -r '.description')
-    - NEW_DESCRIPTION="$DESCRIPTION  Docker pull command:registry.gitlab.com/jakubkoziel992/skillset:$IMAGE_TAG"
-    - echo $NEW_DESCRIPTION
+    - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/$IMAGE_TAG" |  jq -r '.description' > markdown.md
+    - echo -e "\n**Docker Image:** docker pull registry.gitlab.com/jakubkoziel992/skillset:1.7.0" >> markdown.md
+    - DESCRIPTION=$(<markdown.md)
     - >
-      curl --request PUT --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" 
-      --header "Content-Type: application/json"
-      --data "$(jq -nc --arg desc "$NEW_DESCRIPTION" '{ description: $desc }')"
+      curl -v -X PUT -H "PRIVATE-TOKEN:$GITLAB_API_TOKEN" 
+      -H "Content-Type: application/json"
+      -d "$(jq -nc --arg desc "$DESCRIPTION" '{ description: $desc }')"
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG"
 
   rules:
