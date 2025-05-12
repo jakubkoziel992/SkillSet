@@ -7,6 +7,15 @@ stages:
   - push
   - release_update
 
+.default_rules:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        paths:
+          - "app/**"
+          - ".gitlab-ci.yml"
+
+
 .test:
   image: python:alpine3.20
   cache:
@@ -51,17 +60,14 @@ post_merge_tests:
         coverage_format: cobertura
         path: app/reports/coverage.xml
   rules:
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      changes:
-        paths:
-          - "app/**"
-          - ".gitlab-ci.yml"
+    - !reference [.default_rules, rules]
 
 docker_build:
   stage: build
   image: docker:24.0.5
   services:
     - docker:24.0.5-dind
+  dependencies: []
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker buildx create --use
@@ -79,11 +85,7 @@ docker_build:
       - skillset_image.tar
     expire_in: 1h
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        paths:
-          - "app/**"
-          - ".gitlab-ci.yml"
+    - !reference [.default_rules, rules]
 
 trivy_scan:
   stage: scan
@@ -99,11 +101,7 @@ trivy_scan:
     - docker load -i skillset_image.tar  
     - trivy image skillset:latest 
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        paths:
-          - "app/**"
-          - ".gitlab-ci.yml"
+    - !reference [.default_rules, rules]
 
 release:
   stage: semantic_release
@@ -118,11 +116,7 @@ release:
       dotenv: tag.env
     expire_in: 10 mins
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        paths:
-          - "app/**"
-          - ".gitlab-ci.yml"
+    - !reference [.default_rules, rules]
   variables:
     GITLAB_TOKEN: $GL_TOKEN
 
@@ -132,7 +126,6 @@ push:
   services:
     - docker:24.0.5-dind
   dependencies:
-    - docker_build
     - release
   before_script:
   - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
@@ -143,13 +136,8 @@ push:
     - docker image ls 
     - docker push $CI_REGISTRY_IMAGE:latest
     - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG
-
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        paths:
-          - "app/**"
-          - ".gitlab-ci.yml"
+    - !reference [.default_rules, rules]
 
 release_update:
   stage: release_update
@@ -161,6 +149,7 @@ release_update:
    - echo $IMAGE_TAG
   script:
     - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/$IMAGE_TAG" |  jq -r '.description' > markdown.md
+    - cat markdown.md
     - echo -e "\n**Docker Image:** docker pull registry.gitlab.com/jakubkoziel992/skillset:1.7.0" >> markdown.md
     - DESCRIPTION=$(<markdown.md)
     - >
@@ -168,6 +157,5 @@ release_update:
       -H "Content-Type: application/json"
       -d "$(jq -nc --arg desc "$DESCRIPTION" '{ description: $desc }')"
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG"
-
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"'
+    - !reference [.default_rules, rules]
