@@ -92,8 +92,8 @@ docker_build_and_publish:
   script: 
     - >
       docker buildx build -t $CI_REGISTRY_IMAGE:$IMAGE_TAG -t $CI_REGISTRY_IMAGE:latest -f ./app/Dockerfile 
-      --cache-to type=local,dest=cache_image,mode=max
-      --cache-from type=local,src=cache_image
+      --cache-to=type=registry,ref=$CI_REGISTRY_IMAGE:buildcache,mode=max
+      --cache-from=type=registry,ref=$CI_REGISTRY_IMAGE:buildcache
       --push
       ./app
   rules:
@@ -111,7 +111,7 @@ trivy_scan:
     - apk add --no-cache curl
     - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b $HOME/bin v0.59.1
     - export PATH=$HOME/bin:$PATH
-    - docker pull $CI_REGISTRY_IMAGE:latest
+    #- docker pull $CI_REGISTRY_IMAGE:latest
     - trivy image $CI_REGISTRY_IMAGE:latest 
   rules:
     - !reference [.default_rules, rules]
@@ -127,7 +127,7 @@ release_update:
   script:
     - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG" |  jq -r '.description' > markdown.md
     - cat markdown.md
-    - echo -e "\n**Docker Image:** docker pull registry.gitlab.com/jakubkoziel992/skillset:$IMAGE_TAG" >> markdown.md
+    - echo -e "\n**Docker Image:** \ndocker pull registry.gitlab.com/jakubkoziel992/skillset:$IMAGE_TAG" >> markdown.md
     - DESCRIPTION=$(<markdown.md)
     - >
       curl -v -X PUT -H "PRIVATE-TOKEN:$GITLAB_API_TOKEN" 
