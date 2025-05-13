@@ -95,13 +95,7 @@ docker_build_and_publish:
       --cache-to type=local,dest=cache_image,mode=max
       --cache-from type=local,src=cache_image
       --push
-      --load
       ./app
-    - docker save -o skillset_image.tar $CI_REGISTRY_IMAGE:latest
-  artifacts:
-    paths:
-      - skillset_image.tar
-    expire_in: 1h
   rules:
     - !reference [.default_rules, rules]
 
@@ -117,7 +111,7 @@ trivy_scan:
     - apk add --no-cache curl
     - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b $HOME/bin v0.59.1
     - export PATH=$HOME/bin:$PATH
-    - docker load -i skillset_image.tar  
+    - docker pull $CI_REGISTRY_IMAGE:latest
     - trivy image $CI_REGISTRY_IMAGE:latest 
   rules:
     - !reference [.default_rules, rules]
