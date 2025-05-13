@@ -1,10 +1,8 @@
 stages:
   - unit_test
   - post_merge_tests
-  - build
-  - scan
   - semantic_release
-  - push
+  - build_scan_publish
   - release_update
 
 .default_rules:
@@ -62,47 +60,6 @@ post_merge_tests:
   rules:
     - !reference [.default_rules, rules]
 
-docker_build:
-  stage: build
-  image: docker:24.0.5
-  services:
-    - docker:24.0.5-dind
-  dependencies: []
-  before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-    - docker buildx create --use
-    - export DOCKER_BUILDKIT=1
-  script: 
-    - >
-      docker buildx build -t skillset:latest -f ./app/Dockerfile 
-      --cache-to type=local,dest=cache_image,mode=max
-      --cache-from type=local,src=cache_image
-      --load
-      ./app
-    - docker save -o skillset_image.tar skillset:latest
-  artifacts:
-    paths:
-      - skillset_image.tar
-    expire_in: 1h
-  rules:
-    - !reference [.default_rules, rules]
-
-trivy_scan:
-  stage: scan
-  image: docker:24.0.5
-  services:
-    - docker:24.0.5-dind 
-  dependencies:
-    - docker_build
-  script:
-    - apk add --no-cache curl
-    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b $HOME/bin v0.59.1
-    - export PATH=$HOME/bin:$PATH
-    - docker load -i skillset_image.tar  
-    - trivy image skillset:latest 
-  rules:
-    - !reference [.default_rules, rules]
-
 release:
   stage: semantic_release
   image: node:20
@@ -120,22 +77,47 @@ release:
   variables:
     GITLAB_TOKEN: $GL_TOKEN
 
-push:
-  stage: push
+docker_build_and_publish:
+  stage: build_scan_publish
   image: docker:24.0.5
   services:
     - docker:24.0.5-dind
   dependencies:
     - release
   before_script:
-  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - docker buildx create --use
+    - export DOCKER_BUILDKIT=1
+  script: 
+    - >
+      docker buildx build -t $CI_REGISTRY_IMAGE:$IMAGE_TAG -t $CI_REGISTRY_IMAGE:latest -f ./app/Dockerfile 
+      --cache-to type=local,dest=cache_image,mode=max
+      --cache-from type=local,src=cache_image
+      --push
+      --load
+      ./app
+    - docker save -o skillset_image.tar $CI_REGISTRY_IMAGE:latest
+  artifacts:
+    paths:
+      - skillset_image.tar
+    expire_in: 1h
+  rules:
+    - !reference [.default_rules, rules]
+
+trivy_scan:
+  stage: build_scan_publish
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind 
+  needs:
+    - job: docker_build_and_publish
+      artifacts: true
   script:
-    - docker load -i skillset_image.tar
-    - docker tag skillset:latest $CI_REGISTRY_IMAGE:latest
-    - docker tag skillset:latest $CI_REGISTRY_IMAGE:$IMAGE_TAG
-    - docker image ls 
-    - docker push $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - apk add --no-cache curl
+    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b $HOME/bin v0.59.1
+    - export PATH=$HOME/bin:$PATH
+    - docker load -i skillset_image.tar  
+    - trivy image $CI_REGISTRY_IMAGE:latest 
   rules:
     - !reference [.default_rules, rules]
 
@@ -148,9 +130,9 @@ release_update:
    - apt-get update && apt-get install -y curl jq
    - echo $IMAGE_TAG
   script:
-    - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/$IMAGE_TAG" |  jq -r '.description' > markdown.md
+    - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG" |  jq -r '.description' > markdown.md
     - cat markdown.md
-    - echo -e "\n**Docker Image:** docker pull registry.gitlab.com/jakubkoziel992/skillset:1.7.0" >> markdown.md
+    - echo -e "\n**Docker Image:** docker pull registry.gitlab.com/jakubkoziel992/skillset:$IMAGE_TAG" >> markdown.md
     - DESCRIPTION=$(<markdown.md)
     - >
       curl -v -X PUT -H "PRIVATE-TOKEN:$GITLAB_API_TOKEN" 
