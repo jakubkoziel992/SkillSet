@@ -127,7 +127,7 @@ release_update:
   script:
     - curl --request GET --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG" |  jq -r '.description' > markdown.md
     - cat markdown.md
-    - echo -e "\n###Docker Image \ndocker pull registry.gitlab.com/jakubkoziel992/skillset:$IMAGE_TAG" >> markdown.md
+    - echo -e "\n### Docker Image \ndocker pull registry.gitlab.com/jakubkoziel992/skillset:$IMAGE_TAG" >> markdown.md
     - DESCRIPTION=$(<markdown.md)
     - >
       curl -v -X PUT -H "PRIVATE-TOKEN:$GITLAB_API_TOKEN" 
