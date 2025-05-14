@@ -2,7 +2,7 @@
   "branches": ["master"],
   "plugins": [
       ["@semantic-release/commit-analyzer", {
-        "preset": "conventionalcommits",
+        "preset": "angular",
         "releaseRules": [
           { "type": "revert", "release": "patch" },
           { "type": "docs", "release": "patch" },
