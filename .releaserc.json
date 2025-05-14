@@ -21,7 +21,6 @@
       "@semantic-release/release-notes-generator",
       "@semantic-release/git",
       "@semantic-release/gitlab",
-      "conventional-changelog-conventionalcommits",
       [
         "@semantic-release/changelog",
           {
