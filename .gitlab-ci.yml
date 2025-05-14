@@ -2,7 +2,8 @@ stages:
   - unit_test
   - post_merge_tests
   - semantic_release
-  - build_scan_publish
+  - build_and_publish
+  - security
   - release_update
 
 .default_rules:
@@ -79,7 +80,7 @@ release:
     GITLAB_TOKEN: $GL_TOKEN
 
 docker_build_and_publish:
-  stage: build_scan_publish
+  stage: build_and_publish
   image: docker:24.0.5
   services:
     - docker:24.0.5-dind
@@ -102,7 +103,7 @@ docker_build_and_publish:
     
 
 trivy_scan:
-  stage: build_scan_publish
+  stage: security
   image:
     name: docker.io/aquasec/trivy:latest
     entrypoint: [""]
@@ -113,7 +114,11 @@ trivy_scan:
       artifacts: true
   script:
     #- docker pull $CI_REGISTRY_IMAGE:latest
-    - trivy image $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - trivy image --ignore-unfixed --format json-o gl-container-scanning-report.json $CI_REGISTRY_IMAGE:$IMAGE_TAG
+  artifacts:
+    reports:
+      container_scanning: gl-container-scanning-report.json
+    expire_in: 1 week
   rules:
     - !reference [.default_rules, rules]
 
