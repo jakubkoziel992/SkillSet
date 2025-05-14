@@ -4,6 +4,7 @@ stages:
   - semantic_release
   - build_and_publish
   - security
+  - test
   - release_update
 
 .default_rules:
@@ -114,8 +115,14 @@ trivy_scan_image_iaac:
       artifacts: true
   script:
     #- docker pull $CI_REGISTRY_IMAGE:latest
-    - trivy image --severity HIGH,CRITICAL --exit-code 0  $CI_REGISTRY_IMAGE:$IMAGE_TAG
-    - trivy config ./infrastructure
+    - trivy image --severity HIGH,CRITICAL --exit-code 0 --format json -o gl-container-scanning-report.json $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - trivy config --severity CRITICAL --format json -o iac-scan-report.json ./infrastructure
+  artifacts:
+    paths:
+      - iac-scan-report.json
+    reports:
+      container_scanning: gl-container-scanning-report.json
+    expire_in: 1 week
   rules:
     - !reference [.default_rules, rules]
 
@@ -137,3 +144,6 @@ release_update:
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG"
   rules:
     - !reference [.default_rules, rules]
+
+include:
+  - template: Jobs/SAST-IaC.gitlab-ci.yml
