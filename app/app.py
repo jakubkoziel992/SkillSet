@@ -1,7 +1,7 @@
 from flask import Flask
 from sqlalchemy.exc import ProgrammingError
 from database import db
-from config import DevelopmentConfig, ProductionConfig
+from config import ProductionConfig
 from routes import blueprint
 from schemas import ma
 from os import environ,getenv
