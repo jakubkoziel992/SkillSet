@@ -63,13 +63,13 @@ release:
   stage: semantic_release
   image: node:20
   script:
-    - npm install -g semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/git @semantic-release/changelog
+    - npm install --save-dev semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/git @semantic-release/changelog conventional-changelog-conventionalcommits
     - npx semantic-release > semantic-release.log
     - cat semantic-release.log
     - VERSION=$(grep -ioP "The next release version is \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log || echo "1")
     - echo "IMAGE_TAG=$VERSION" >> tag.env
     - >
-      if [[ "$VERSION" -eq 1 ]]; then echo "There was no version change"; exit 0; fi
+      if [[ "$VERSION" -eq 1 ]]; then echo "There was no version change"; exit 1; fi
   artifacts:
     when: on_success
     reports:
