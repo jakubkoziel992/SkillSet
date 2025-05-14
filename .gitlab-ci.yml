@@ -102,7 +102,7 @@ docker_build_and_publish:
     - !reference [.default_rules, rules]
     
 
-trivy_scan:
+trivy_scan_image_iaac:
   stage: security
   image:
     name: docker.io/aquasec/trivy:latest
@@ -114,11 +114,15 @@ trivy_scan:
       artifacts: true
   script:
     #- docker pull $CI_REGISTRY_IMAGE:latest
-    - trivy image --ignore-unfixed --format json -o gl-container-scanning-report.json $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - trivy image --severity HIGH,CRITICAL --exit-code 0 --format json -o gl-container-scanning-report.json $CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - trivy config --format json -o iac-scan-report.json ./infrastructure
   artifacts:
+    paths:
+      - iac-scan-report.json
     reports:
       container_scanning: gl-container-scanning-report.json
     expire_in: 1 week
+    
   rules:
     - !reference [.default_rules, rules]
 
