@@ -63,7 +63,7 @@ release:
   stage: semantic_release
   image: node:20
   script:
-    - npm install --save-dev semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator  @semantic-release/changelog conventional-changelog-conventionalcommits
+    - npm install --save-dev semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/git @semantic-release/changelog conventional-changelog-conventionalcommits
     - npx semantic-release > semantic-release.log
     - cat semantic-release.log
     - VERSION=$(grep -ioP "The next release version is \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log || echo "1")
