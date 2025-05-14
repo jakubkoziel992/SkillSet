@@ -71,7 +71,6 @@ release:
     - >
       if [[ "$VERSION" -eq 1 ]]; then echo "There was no version change"; exit 1; fi
   artifacts:
-    when: on_success
     reports:
       dotenv: tag.env
     expire_in: 10 mins
