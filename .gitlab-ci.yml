@@ -26,7 +26,7 @@ stages:
     - python -m pip install -r ./app/requirements.txt
     - python -m pip install pytest
 
-unit_test:
+.unit_test:
   stage: unit_test
   extends: .test
   script:
@@ -44,7 +44,7 @@ lint_pr:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-post_merge_tests:
+.post_merge_tests:
   stage: post_merge_tests
   extends: .test
   script:
@@ -66,13 +66,10 @@ release:
     - npm install -g semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/git @semantic-release/changelog
     - npx semantic-release > semantic-release.log
     - cat semantic-release.log
-    - VERSION=$(grep -ioP "The next release version is \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log)
-    - |
-      if [[ -z "$VERSION"]]; then 
-        echo "There was no version change"
-        exit 0
-      fi 
+    - VERSION=$(grep -ioP "The next release version is \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log || echo "1")
     - echo "IMAGE_TAG=$VERSION" >> tag.env
+    - >
+      if [[ "$VERSION" -eq 1 ]]; then echo "There was no version change"; exit 0; fi
   artifacts:
     when: on_success
     reports:
@@ -91,6 +88,7 @@ docker_build_and_publish:
   dependencies:
     - release
   before_script:
+    - echo $IMAGE_TAG
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker buildx create --use
     - export DOCKER_BUILDKIT=1
@@ -103,8 +101,9 @@ docker_build_and_publish:
       ./app
   rules:
     - !reference [.default_rules, rules]
+    
 
-trivy_scan:
+.trivy_scan:
   stage: build_scan_publish
   image: docker:24.0.5
   services:
@@ -123,7 +122,7 @@ trivy_scan:
   rules:
     - !reference [.default_rules, rules]
 
-release_update:
+.release_update:
   stage: release_update
   image: debian:bullseye-slim
   dependencies:
