@@ -24,7 +24,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_USER=${DB_USER}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: mysql
@@ -36,6 +37,11 @@ services:
       - MYSQL_USER=${DB_USER}
     ports:
       - "3606:3606"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
     volumes:
       - skillset_volume:/var/lib/mysql
 
