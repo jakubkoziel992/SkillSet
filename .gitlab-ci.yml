@@ -7,7 +7,7 @@ stages:
   - release_update
 
 include:
-  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
 
 .default_rules:
   rules:
