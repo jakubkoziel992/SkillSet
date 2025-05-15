@@ -133,9 +133,6 @@ docker_build_and_publish:
 
 sast:
   stage: security
-  artifacts:
-    paths:
-      - gl-sast-report.json
   rules:
     - !reference [.default_rules, rules]
     # reports:
