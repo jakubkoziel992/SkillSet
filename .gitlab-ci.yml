@@ -112,8 +112,9 @@ trivy_scan_image_iaac:
       artifacts: false
     - job: release
       artifacts: true
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
   script:
-    #- docker pull $CI_REGISTRY_IMAGE:latest
     - trivy image --severity HIGH,CRITICAL --exit-code 0 --format json -o gl-container-scanning-report.json $CI_REGISTRY_IMAGE:$IMAGE_TAG
     - trivy config --severity CRITICAL --format json -o iac-scan-report.json ./infrastructure
     - trivy fs --scanners vuln --file-patterns "python:requirements\.txt" --format json -o sca-scan-report.json .
