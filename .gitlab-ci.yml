@@ -8,6 +8,7 @@ stages:
 
 include:
   - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 .default_rules:
   rules:
@@ -135,6 +136,8 @@ sast:
   stage: security
     # reports:
     #   sast: gl-sast-report.json
+dependency_scanning:
+  stage: security
 
 
 release_update:
