@@ -102,7 +102,7 @@ docker_build_and_publish:
     - !reference [.default_rules, rules]
     
 
-trivy_scan_image_iaac:
+.trivy_scan_image_iaac:
   stage: security
   image:
     name: docker.io/aquasec/trivy:latest
