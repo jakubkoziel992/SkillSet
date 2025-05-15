@@ -6,6 +6,9 @@ stages:
   - security
   - release_update
 
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+
 .default_rules:
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -127,6 +130,17 @@ docker_build_and_publish:
     expire_in: 1 week
   rules:
     - !reference [.default_rules, rules]
+
+sast:
+  stage: security
+  artifacts:
+    paths:
+      - gl-sast-report.json
+  rules:
+    - !reference [.default_rules, rules]
+    # reports:
+    #   sast: gl-sast-report.json
+
 
 release_update:
   stage: release_update
