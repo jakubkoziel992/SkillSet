@@ -6,9 +6,15 @@ stages:
   - security
   - release_update
 
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+
+
 include:
   - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 .default_rules:
   rules:
@@ -134,10 +140,14 @@ docker_build_and_publish:
 
 sast:
   stage: security
-    # reports:
-    #   sast: gl-sast-report.json
-dependency_scanning:
-  stage: security
+  artifacts:
+    paths:
+      - gl-sast-report.json
+    reports:
+      sast: gl-sast-report.json
+  rules:
+    - !reference [.default_rules, rules]
+    - when: never
 
 
 release_update:
