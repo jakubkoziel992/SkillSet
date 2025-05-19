@@ -7,13 +7,13 @@ variable "rds_sg" {
 
 variable "username" {
   description = "The databse username"
-  type = string
+  type        = string
 }
 
 variable "password" {
   description = "The database password"
-  type      = string
-  sensitive = true
+  type        = string
+  sensitive   = true
 }
 
 variable "project_name" {

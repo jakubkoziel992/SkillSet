@@ -5,6 +5,8 @@ stages:
   - build_and_publish
   - security
   - release_update
+  - staging_deploy
+  - staging_destroy
 
 workflow:
   rules:
@@ -139,11 +141,8 @@ sast:
   artifacts:
     paths:
       - gl-sast-report.json
-  #   reports:
-  #     sast: gl-sast-report.json
-  # rules:
-  #   - !reference [.default_rules, rules]
-  #   - when: never
+  #  rules:
+  #    - !reference [.default_rules, rules]
 
 
 release_update:
@@ -164,3 +163,35 @@ release_update:
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/releases/v$IMAGE_TAG"
   rules:
     - !reference [.default_rules, rules]
+
+aws_staging_deploy:
+  stage: staging_deploy
+  image: 
+    name: hashicorp/terraform:light
+    entrypoint: [""]
+  script:
+    - cd ./infrastructure/terraform/envs/dev/app
+    - terraform init
+    - terraform apply -auto-approve
+    - export LB_URL=$(terraform output -raw elb_address)
+    - echo "Load balancer URL:$LB_URL"
+  environment:
+    name: staging
+    url: $LB_URL
+  rules: 
+    - !reference [.default_rules, rules]
+
+.aws_staging_destroy:
+  stage: staging_destroy
+  image: 
+    name: hashicorp/terraform:light
+    entrypoint: [""]
+  script:
+    - cd ./infrastructure/terraform/envs/dev/app
+    - terraform init
+    - terraform destroy -auto-approve
+  when: manual
+  rules: 
+    - !reference [.default_rules, rules]
+
+
