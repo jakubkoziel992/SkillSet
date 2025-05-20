@@ -6,7 +6,7 @@ stages:
   - security
   - release_update
   - staging_deploy
-  - staging_destroy
+  - prod_deploy
 
 workflow:
   auto_cancel:
@@ -146,7 +146,6 @@ sast:
     paths:
       - gl-sast-report.json
 
-
 release_update:
   stage: release_update
   image: debian:bullseye-slim
@@ -166,7 +165,7 @@ release_update:
   rules:
     - !reference [.default_rules, rules]
 
-aws_staging_deploy:
+.aws_staging_deploy:
   stage: staging_deploy
   image: 
     name: hashicorp/terraform:light
@@ -183,17 +182,40 @@ aws_staging_deploy:
   rules: 
     - !reference [.default_rules, rules]
 
-.aws_staging_destroy:
-  stage: staging_destroy
+aws_prod_deploy:
+  stage: prod_deploy
   image: 
     name: hashicorp/terraform:light
     entrypoint: [""]
   script:
-    - cd ./infrastructure/terraform/envs/dev/app
+    - cd ./infrastructure/terraform/envs/prod/vpc
     - terraform init
-    - terraform destroy -auto-approve
+    - terraform apply -auto-approve
+    - echo "VPC Deployment"
+    - cd ./infrastructure/terraform/envs/prod/app
+    - terraform init
+    - terraform apply -auto-approve
+    - echo "App Deployment"
+    - export LB_URL=$(terraform output -raw elb_address)
+    - echo "Load balancer URL:$LB_URL"
+  environment:
+    name: prod
+    url: $LB_URL
   when: manual
   rules: 
     - !reference [.default_rules, rules]
+
+# .aws_staging_destroy:
+#   stage: staging_destroy
+#   image: 
+#     name: hashicorp/terraform:light
+#     entrypoint: [""]
+#   script:
+#     - cd ./infrastructure/terraform/envs/dev/app
+#     - terraform init
+#     - terraform destroy -auto-approve
+#   when: manual
+#   rules: 
+#     - !reference [.default_rules, rules]
 
 
