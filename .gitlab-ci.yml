@@ -192,7 +192,7 @@ aws_prod_deploy:
     - terraform init
     - terraform apply -auto-approve
     - echo "VPC Deployment"
-    - cd ./infrastructure/terraform/envs/prod/app
+    - cd ../app
     - terraform init
     - terraform apply -auto-approve
     - echo "App Deployment"
