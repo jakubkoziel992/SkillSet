@@ -10,9 +10,11 @@ data "http" "myip" {
 }
 
 data "terraform_remote_state" "vpc" {
-  backend = "local"
+  backend = "s3"
   config = {
-    path = "../vpc/terraform.tfstate"
+    bucket = "terraform-state-prod20250520042617698000000001"
+    key    = "vpc/terraform.tfstate"
+    region = "us-east-1"
   }
 }
 
@@ -23,7 +25,7 @@ data "terraform_remote_state" "vpc" {
 # }
 
 data "aws_secretsmanager_secret" "secrets" {
-  name = "skillset-prod-secrets"
+  name = "skillset-prod-secret"
 }
 
 data "aws_secretsmanager_secret_version" "app_secrets" {

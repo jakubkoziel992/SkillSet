@@ -28,7 +28,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
   name                        = "terraform-remote-state-${var.environment}"
   billing_mode                = "PAY_PER_REQUEST"
   hash_key                    = "LockID"
-  deletion_protection_enabled = true
+  deletion_protection_enabled = false
   attribute {
     name = "LockID"
     type = "S"
