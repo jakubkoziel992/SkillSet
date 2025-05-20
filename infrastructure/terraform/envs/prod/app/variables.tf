@@ -8,14 +8,14 @@ variable "environment" {
   type        = string
 }
 
-variable "username" {
-  type = string
-}
+# variable "username" {
+#   type = string
+# }
 
-variable "password" {
-  type      = string
-  sensitive = true
-}
+# variable "password" {
+#   type      = string
+#   sensitive = true
+# }
 
 variable "db_name" {
   description = "Database name"
@@ -72,11 +72,11 @@ variable "flask_app" {
   type        = string
 }
 
-variable "app_secret_key" {
-  description = "application SECRET_KEY"
-  type        = string
-  sensitive   = true
-}
+# variable "app_secret_key" {
+#   description = "application SECRET_KEY"
+#   type        = string
+#   sensitive   = true
+# }
 
 variable "volume_size" {
   description = "Device volume size"
