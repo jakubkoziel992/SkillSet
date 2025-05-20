@@ -84,7 +84,6 @@ release:
     - cat semantic-release.log
     - VERSION=$(grep -ioP "The next release version is \K[0-9]+\.[0-9]+\.[0-9]+" semantic-release.log || echo "1")
     - echo "IMAGE_TAG=$VERSION" >> tag.env
-    #- >if [[ "$VERSION" -eq 1 ]]; then echo "There was no version change"; exit 1; fi
   artifacts:
     reports:
       dotenv: tag.env
