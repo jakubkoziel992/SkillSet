@@ -9,6 +9,8 @@ stages:
   - staging_destroy
 
 workflow:
+  auto_cancel:
+    on_new_commit: interruptible
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -40,6 +42,7 @@ include:
 unit_test:
   stage: unit_test
   extends: .test
+  interruptible: true
   script:
     - python -m pytest app/tests/unit_test.py -v
   rules:
@@ -48,6 +51,7 @@ unit_test:
 lint_pr:
   stage: unit_test
   image: node:18
+  interruptible: true
   script:
     - npm install --no-save @commitlint/config-conventional @commitlint/cli
     - git fetch origin master
@@ -141,8 +145,6 @@ sast:
   artifacts:
     paths:
       - gl-sast-report.json
-  #  rules:
-  #    - !reference [.default_rules, rules]
 
 
 release_update:
