@@ -188,34 +188,11 @@ aws_prod_deploy:
     name: hashicorp/terraform:light
     entrypoint: [""]
   script:
-    - cd ./infrastructure/terraform/envs/prod/vpc
-    - terraform init
-    - terraform apply -auto-approve
-    - echo "VPC Deployment"
-    - cd ../app
-    - terraform init
-    - terraform apply -auto-approve
-    - echo "App Deployment"
-    - export LB_URL=$(terraform output -raw elb_address)
-    - echo "Load balancer URL:$LB_URL"
+    - ./scripts/deploy_prod_AWS.sh
   environment:
     name: prod
     url: $LB_URL
   when: manual
   rules: 
     - !reference [.default_rules, rules]
-
-# .aws_staging_destroy:
-#   stage: staging_destroy
-#   image: 
-#     name: hashicorp/terraform:light
-#     entrypoint: [""]
-#   script:
-#     - cd ./infrastructure/terraform/envs/dev/app
-#     - terraform init
-#     - terraform destroy -auto-approve
-#   when: manual
-#   rules: 
-#     - !reference [.default_rules, rules]
-
 
