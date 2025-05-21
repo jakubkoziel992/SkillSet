@@ -16,11 +16,32 @@ resource "aws_s3_bucket_public_access_block" "terraform_state_public_access_bloc
   restrict_public_buckets = var.restrict_public_buckets
 }
 
-resource "aws_s3_bucket_versioning" "Terraform_state_versioning" {
+resource "aws_s3_bucket_versioning" "terraform_state_versioning" {
   bucket = aws_s3_bucket.terraform_state_bucket.id
 
   versioning_configuration {
     status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "terraform_state_lifecycle_configuration" {
+  bucket = aws_s3_bucket.terraform_state_bucket.id
+
+  rule {
+    id = "delete-old-versions"
+    status = "Enabled"
+    
+    filter {
+      prefix = ""
+    }
+    
+    expiration {
+      days = 5
+    }
+
+     noncurrent_version_expiration {
+      noncurrent_days = 1
+    }
   }
 }
 
