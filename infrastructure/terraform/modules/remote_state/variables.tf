@@ -1,6 +1,11 @@
 variable "environment" {
   description = "The environment name"
   type        = string
+
+  validation {
+    condition = var.environment == "prod" || var.environment == "dev"
+    error_message = "Invalid environment. Allowed values: 'dev' or 'prod'."
+  }
 }
 
 variable "force_destroy" {
