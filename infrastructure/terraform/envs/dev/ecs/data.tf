@@ -14,7 +14,7 @@ data "http" "myip" {
 }
 
 data "aws_secretsmanager_secret" "secrets" {
-  name = "skillset-dev-secrets"
+  name = "skillset-dev-secret"
 }
 
 locals {
