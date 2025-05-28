@@ -5,8 +5,6 @@ stages:
   - build_and_publish
   - security
   - prepare
-  - staging_deploy
-  - prod_deploy
 
 workflow:
   auto_cancel:
@@ -179,51 +177,6 @@ upload_artifacts_to_S3:
   artifacts:
     paths:
       - upload.log
-
-.deploy_ecs_staging:
-  stage: staging_deploy
-  image: 
-    name: hashicorp/terraform:light
-    entrypoint: [""]
-  script:
-    - cd ./infrastructure/terraform/envs/dev/ecs
-    - terraform init 
-    - terraform apply -auto-approve
-  environment:
-    name: staging 
-    on_stop: stop_staging_environment
-  rules:
-    - !reference [.default_rules, rules]
-
-.stop_staging_environment:
-  stage: staging_deploy
-  image: 
-    name: hashicorp/terraform:light
-    entrypoint: [""]
-  script:
-    - cd ./infrastructure/terraform/envs/dev/ecs
-    - terraform init 
-    - terraform destroy -auto-approve
-  when: manual
-  environment: 
-    name: staging 
-    action: stop 
-  rules:
-    - !reference [.default_rules, rules]
-
-.deploy_ecs_prod:
-  stage: prod_deploy
-  image: 
-    name: hashicorp/terraform:light
-    entrypoint: [""]
-  script:
-    - ./scripts/deploy_prod_ECS.sh
-  environment:
-    name: prod
-    url: $LB_URL
-  when: manual
-  rules:
-    - !reference [.default_rules, rules]
 
 .k8s_staging_deploy:
   stage: staging_deploy
